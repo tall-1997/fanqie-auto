@@ -6,38 +6,40 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 番茄小说自动签到模块 v9.0.0
- * HTTP请求拦截模式 - 通过拦截网络请求实现自动签到/任务
+ * 番茄小说自动签到模块 v10.0.0
+ * 直接HTTP请求模式 - 主动发起签到/任务请求
  */
 public class MainHook implements IXposedHookLoadPackage {
 
     private static final String TAG = "[FanqieAuto] ";
     private static final String TARGET_PACKAGE = "com.dragon.read";
-    private static final String MODULE_VERSION = "v9.0.0";
+    private static final String MODULE_VERSION = "v10.0.0";
 
     private ClassLoader appClassLoader;
     private ScheduledExecutorService scheduler;
     
-    // 签到URL
-    private static final String SIGN_URL = "/luckycat/novel/v1/task/done/sign_in";
-    private static final String MEAL_URL = "/luckycat/novel/v1/task/done/meal";
-    private static final String REDPACK_URL = "/luckycat/novel/v1/task/done/redpack";
-    private static final String TREASURE_URL = "/luckycat/novel/v1/task/done/treasure_task";
+    // 保存捕获的请求信息
+    private String capturedUrl = null;
+    private String capturedMethod = null;
+    private String capturedHeaders = null;
+    private String capturedBody = null;
     
     // 状态
     private AtomicBoolean isProcessing = new AtomicBoolean(false);
     private int signCount = 0;
     private int taskCount = 0;
-    
-    // 找到的请求构建器
-    private Object requestBuilder = null;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -45,34 +47,31 @@ public class MainHook implements IXposedHookLoadPackage {
 
         XposedBridge.log(TAG + "==============================");
         XposedBridge.log(TAG + "番茄小说自动签到模块 " + MODULE_VERSION);
-        XposedBridge.log(TAG + "HTTP请求拦截模式");
+        XposedBridge.log(TAG + "直接HTTP请求模式");
         XposedBridge.log(TAG + "==============================");
 
         appClassLoader = lpparam.classLoader;
 
         try {
-            // Hook OkHttp请求构建器
-            hookOkHttpRequestBuilder(lpparam.classLoader);
-            
-            // Hook Retrofit接口
-            hookRetrofitInterface(lpparam.classLoader);
+            // Hook HTTP请求，捕获请求信息
+            hookHttpRequest(lpparam.classLoader);
             
             // 启动定时任务
             startScheduler();
             
             XposedBridge.log(TAG + "Hook初始化完成");
-            XposedBridge.log(TAG + "自动签到/任务已启动");
+            XposedBridge.log(TAG + "等待捕获签到请求...");
         } catch (Throwable e) {
             XposedBridge.log(TAG + "初始化失败: " + e.getMessage());
         }
     }
 
     /**
-     * Hook OkHttp请求构建器
+     * Hook HTTP请求，捕获请求信息
      */
-    private void hookOkHttpRequestBuilder(ClassLoader classLoader) {
+    private void hookHttpRequest(ClassLoader classLoader) {
         try {
-            // Hook Request.Builder.build()
+            // Hook OkHttp Request.Builder.build()
             XposedHelpers.findAndHookMethod(
                 "okhttp3.Request$Builder",
                 classLoader,
@@ -85,8 +84,38 @@ public class MainHook implements IXposedHookLoadPackage {
                             String url = (String) XposedHelpers.getObjectField(request, "url");
                             String method = (String) XposedHelpers.getObjectField(request, "method");
                             
-                            if (url != null) {
-                                handleRequest(url, method, request);
+                            if (url != null && isSignUrl(url)) {
+                                XposedBridge.log(TAG + "\n[=== 捕获签到请求 ===]");
+                                XposedBridge.log(TAG + "URL: " + url);
+                                XposedBridge.log(TAG + "方法: " + method);
+                                
+                                // 保存请求信息
+                                capturedUrl = url;
+                                capturedMethod = method;
+                                
+                                // 尝试获取请求头
+                                try {
+                                    Object headers = XposedHelpers.getObjectField(request, "headers");
+                                    if (headers != null) {
+                                        capturedHeaders = headers.toString();
+                                        XposedBridge.log(TAG + "请求头: " + capturedHeaders);
+                                    }
+                                } catch (Throwable e) {
+                                    // 忽略
+                                }
+                                
+                                // 尝试获取请求体
+                                try {
+                                    Object body = XposedHelpers.getObjectField(request, "body");
+                                    if (body != null) {
+                                        capturedBody = body.toString();
+                                        XposedBridge.log(TAG + "请求体: " + capturedBody);
+                                    }
+                                } catch (Throwable e) {
+                                    // 忽略
+                                }
+                                
+                                XposedBridge.log(TAG + "===================\n");
                             }
                         } catch (Throwable e) {
                             // 忽略
@@ -95,143 +124,21 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
             
-            // Hook Request.Builder.url(String)
-            XposedHelpers.findAndHookMethod(
-                "okhttp3.Request$Builder",
-                classLoader,
-                "url",
-                String.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        String url = (String) param.args[0];
-                        if (url != null && isImportantUrl(url)) {
-                            XposedBridge.log(TAG + "构建请求: " + url);
-                            requestBuilder = param.thisObject;
-                        }
-                    }
-                }
-            );
-            
-            XposedBridge.log(TAG + "OkHttp Hook成功");
+            XposedBridge.log(TAG + "HTTP请求Hook成功");
         } catch (Throwable e) {
-            XposedBridge.log(TAG + "OkHttp Hook失败: " + e.getMessage());
+            XposedBridge.log(TAG + "HTTP请求Hook失败: " + e.getMessage());
         }
     }
 
     /**
-     * Hook Retrofit接口
+     * 判断是否为签到URL
      */
-    private void hookRetrofitInterface(ClassLoader classLoader) {
-        try {
-            // 尝试找到API接口类
-            String[] apiClasses = {
-                "com.dragon.read.rpc.rpc.UgcApiService",
-                "com.dragon.read.saas.ugc.rpc.CommentApiService"
-            };
-            
-            for (String className : apiClasses) {
-                try {
-                    Class<?> clazz = classLoader.loadClass(className);
-                    hookApiClass(clazz, className);
-                } catch (Throwable e) {
-                    // 继续尝试下一个
-                }
-            }
-            
-            XposedBridge.log(TAG + "Retrofit Hook成功");
-        } catch (Throwable e) {
-            XposedBridge.log(TAG + "Retrofit Hook失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Hook API类
-     */
-    private void hookApiClass(Class<?> clazz, String className) {
-        Method[] methods = clazz.getDeclaredMethods();
-        
-        for (Method method : methods) {
-            String methodName = method.getName();
-            
-            if (methodName.contains("sign") || methodName.contains("task") || 
-                methodName.contains("done") || methodName.contains("reward")) {
-                
-                try {
-                    XposedBridge.hookMethod(method, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            XposedBridge.log(TAG + "\n[=== API调用 ===]");
-                            XposedBridge.log(TAG + "类: " + className);
-                            XposedBridge.log(TAG + "方法: " + methodName);
-                            
-                            if (param.args != null) {
-                                for (int i = 0; i < param.args.length; i++) {
-                                    XposedBridge.log(TAG + "参数[" + i + "]: " + param.args[i]);
-                                }
-                            }
-                        }
-                        
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            if (param.getThrowable() != null) {
-                                XposedBridge.log(TAG + "失败: " + param.getThrowable().getMessage());
-                            } else {
-                                XposedBridge.log(TAG + "返回: " + param.getResult());
-                                
-                                if (methodName.contains("sign")) {
-                                    signCount++;
-                                } else {
-                                    taskCount++;
-                                }
-                            }
-                            XposedBridge.log(TAG + "==============\n");
-                        }
-                    });
-                    
-                    XposedBridge.log(TAG + "Hook方法: " + className + "." + methodName);
-                } catch (Throwable e) {
-                    // 忽略
-                }
-            }
-        }
-    }
-
-    /**
-     * 处理请求
-     */
-    private void handleRequest(String url, String method, Object request) {
-        String lower = url.toLowerCase();
-        
-        if (lower.contains("sign_in") || lower.contains("signin")) {
-            XposedBridge.log(TAG + "\n[=== 签到请求 ===]");
-            XposedBridge.log(TAG + "URL: " + url);
-            XposedBridge.log(TAG + "方法: " + method);
-            XposedBridge.log(TAG + "================\n");
-            signCount++;
-        } else if (lower.contains("task/done") || lower.contains("task_done")) {
-            XposedBridge.log(TAG + "\n[=== 任务请求 ===]");
-            XposedBridge.log(TAG + "URL: " + url);
-            XposedBridge.log(TAG + "方法: " + method);
-            XposedBridge.log(TAG + "================\n");
-            taskCount++;
-        } else if (lower.contains("reward") || lower.contains("claim")) {
-            XposedBridge.log(TAG + "\n[=== 奖励请求 ===]");
-            XposedBridge.log(TAG + "URL: " + url);
-            XposedBridge.log(TAG + "方法: " + method);
-            XposedBridge.log(TAG + "================\n");
-        }
-    }
-
-    /**
-     * 判断是否为重要URL
-     */
-    private boolean isImportantUrl(String url) {
+    private boolean isSignUrl(String url) {
         String lower = url.toLowerCase();
         return lower.contains("sign_in") || lower.contains("signin") ||
                lower.contains("task/done") || lower.contains("task_done") ||
                lower.contains("reward") || lower.contains("claim") ||
-               lower.contains("luckycat") || lower.contains("coin");
+               lower.contains("luckycat");
     }
 
     /**
