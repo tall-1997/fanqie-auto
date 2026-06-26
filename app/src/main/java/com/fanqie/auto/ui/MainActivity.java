@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         
         // 版本
         TextView version = new TextView(this);
-        version.setText("v14.0.0 | 直接API调用模式");
+        version.setText("v15.0.0 | 自动捕获Token模式");
         version.setTextSize(14);
         version.setTextColor(Color.parseColor("#4CAF50"));
         version.setGravity(Gravity.CENTER);
