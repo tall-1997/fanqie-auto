@@ -13,14 +13,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 番茄小说自动签到模块 v11.0.0
- * 真正的自动签到 - 通过WebView执行JavaScript实现
+ * 番茄小说自动签到模块 v12.0.0
+ * 直接反射调用 - 尝试直接调用应用内部签到方法
  */
 public class MainHook implements IXposedHookLoadPackage {
 
     private static final String TAG = "[FanqieAuto] ";
     private static final String TARGET_PACKAGE = "com.dragon.read";
-    private static final String MODULE_VERSION = "v11.0.0";
+    private static final String MODULE_VERSION = "v12.0.0";
 
     private ClassLoader appClassLoader;
     private ScheduledExecutorService scheduler;
@@ -30,9 +30,11 @@ public class MainHook implements IXposedHookLoadPackage {
     private int signCount = 0;
     private int taskCount = 0;
     
-    // WebView实例
-    private Object webView = null;
-    private Object webViewClient = null;
+    // 找到的类和方法
+    private Class<?> goldCoinRepoClass = null;
+    private Class<?> taskDoneRepoClass = null;
+    private Method signMethod = null;
+    private Method taskMethod = null;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -40,181 +42,127 @@ public class MainHook implements IXposedHookLoadPackage {
 
         XposedBridge.log(TAG + "==============================");
         XposedBridge.log(TAG + "番茄小说自动签到模块 " + MODULE_VERSION);
-        XposedBridge.log(TAG + "WebView JavaScript模式");
+        XposedBridge.log(TAG + "直接反射调用模式");
         XposedBridge.log(TAG + "==============================");
 
         appClassLoader = lpparam.classLoader;
 
         try {
-            // Hook WebView
-            hookWebView(lpparam.classLoader);
+            // 查找签到相关类
+            findSignClasses(lpparam.classLoader);
             
-            // Hook HTTP请求捕获token
-            hookHttpRequest(lpparam.classLoader);
+            // Hook关键方法
+            hookKeyMethods(lpparam.classLoader);
             
             // 启动定时任务
             startScheduler();
             
             XposedBridge.log(TAG + "Hook初始化完成");
-            XposedBridge.log(TAG + "等待WebView加载...");
         } catch (Throwable e) {
             XposedBridge.log(TAG + "初始化失败: " + e.getMessage());
         }
     }
 
     /**
-     * Hook WebView
+     * 查找签到相关类
      */
-    private void hookWebView(ClassLoader classLoader) {
+    private void findSignClasses(ClassLoader classLoader) {
+        // 查找GoldCoinRepo类
         try {
-            // Hook WebView.loadUrl
-            XposedHelpers.findAndHookMethod(
-                "android.webkit.WebView",
-                classLoader,
-                "loadUrl",
-                String.class,
-                new XC_MethodHook() {
+            goldCoinRepoClass = classLoader.loadClass(
+                "com.dragon.read.ug.kmp.readingstatistics.parts.goldcoin.GoldCoinRepo");
+            XposedBridge.log(TAG + "找到GoldCoinRepo类");
+            
+            // 查找签到方法
+            for (Method method : goldCoinRepoClass.getDeclaredMethods()) {
+                if (method.getName().contains("executeSignDone") || 
+                    method.getName().contains("requestGoldCoinSignInDone")) {
+                    signMethod = method;
+                    XposedBridge.log(TAG + "找到签到方法: " + method.getName());
+                    break;
+                }
+            }
+        } catch (Throwable e) {
+            XposedBridge.log(TAG + "未找到GoldCoinRepo类: " + e.getMessage());
+        }
+        
+        // 查找TaskDoneDataRepository类
+        try {
+            taskDoneRepoClass = classLoader.loadClass(
+                "com.dragon.read.ug.kmp.common.repository.TaskDoneDataRepository");
+            XposedBridge.log(TAG + "找到TaskDoneDataRepository类");
+            
+            // 查找任务方法
+            for (Method method : taskDoneRepoClass.getDeclaredMethods()) {
+                if (method.getName().contains("executeTaskDone") || 
+                    method.getName().contains("requestTaskDone")) {
+                    taskMethod = method;
+                    XposedBridge.log(TAG + "找到任务方法: " + method.getName());
+                    break;
+                }
+            }
+        } catch (Throwable e) {
+            XposedBridge.log(TAG + "未找到TaskDoneDataRepository类: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Hook关键方法
+     */
+    private void hookKeyMethods(ClassLoader classLoader) {
+        // Hook签到方法
+        if (signMethod != null) {
+            try {
+                XposedBridge.hookMethod(signMethod, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        XposedBridge.log(TAG + "\n[=== 签到方法调用 ===]");
+                        XposedBridge.log(TAG + "方法: " + signMethod.getName());
+                    }
+                    
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        String url = (String) param.args[0];
-                        if (url != null && url.contains("luckycat")) {
-                            XposedBridge.log(TAG + "WebView加载: " + url);
-                            webView = param.thisObject;
-                            
-                            // 注入JavaScript
-                            injectJavaScript(param.thisObject);
+                        if (param.getThrowable() != null) {
+                            XposedBridge.log(TAG + "签到失败: " + param.getThrowable().getMessage());
+                        } else {
+                            XposedBridge.log(TAG + "签到成功!");
+                            signCount++;
                         }
+                        XposedBridge.log(TAG + "===================\n");
                     }
-                }
-            );
-            
-            // Hook WebView.setWebViewClient
-            XposedHelpers.findAndHookMethod(
-                "android.webkit.WebView",
-                classLoader,
-                "setWebViewClient",
-                "android.webkit.WebViewClient",
-                new XC_MethodHook() {
+                });
+                XposedBridge.log(TAG + "Hook签到方法成功");
+            } catch (Throwable e) {
+                XposedBridge.log(TAG + "Hook签到方法失败: " + e.getMessage());
+            }
+        }
+        
+        // Hook任务方法
+        if (taskMethod != null) {
+            try {
+                XposedBridge.hookMethod(taskMethod, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        XposedBridge.log(TAG + "\n[=== 任务方法调用 ===]");
+                        XposedBridge.log(TAG + "方法: " + taskMethod.getName());
+                    }
+                    
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        webViewClient = param.args[0];
-                        XposedBridge.log(TAG + "WebViewClient设置");
-                    }
-                }
-            );
-            
-            XposedBridge.log(TAG + "WebView Hook成功");
-        } catch (Throwable e) {
-            XposedBridge.log(TAG + "WebView Hook失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * 注入JavaScript
-     */
-    private void injectJavaScript(Object webView) {
-        try {
-            // 自动签到JavaScript代码
-            String jsCode = 
-                "(function() {" +
-                "  console.log('[FanqieAuto] 开始自动签到...');" +
-                "  " +
-                "  // 尝试点击签到按钮" +
-                "  var signBtn = document.querySelector('[class*=sign]') || " +
-                "                document.querySelector('[class*=Sign]') || " +
-                "                document.querySelector('button[onclick*=sign]');" +
-                "  if (signBtn) {" +
-                "    console.log('[FanqieAuto] 找到签到按钮，点击');" +
-                "    signBtn.click();" +
-                "  }" +
-                "  " +
-                "  // 尝试领取奖励" +
-                "  var claimBtn = document.querySelector('[class*=claim]') || " +
-                "                 document.querySelector('[class*=Claim]') || " +
-                "                 document.querySelector('button[onclick*=claim]');" +
-                "  if (claimBtn) {" +
-                "    console.log('[FanqieAuto] 找到领取按钮，点击');" +
-                "    claimBtn.click();" +
-                "  }" +
-                "  " +
-                "  // 尝试完成任务" +
-                "  var taskBtn = document.querySelector('[class*=task]') || " +
-                "                document.querySelector('[class*=Task]') || " +
-                "                document.querySelector('button[onclick*=task]');" +
-                "  if (taskBtn) {" +
-                "    console.log('[FanqieAuto] 找到任务按钮，点击');" +
-                "    taskBtn.click();" +
-                "  }" +
-                "  " +
-                "  console.log('[FanqieAuto] 自动签到完成');" +
-                "})();";
-            
-            // 通过反射调用evaluateJavascript
-            Method evaluateMethod = webView.getClass().getMethod("evaluateJavascript", String.class, Object.class);
-            evaluateMethod.invoke(webView, jsCode, null);
-            
-            XposedBridge.log(TAG + "JavaScript注入成功");
-        } catch (Throwable e) {
-            XposedBridge.log(TAG + "JavaScript注入失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Hook HTTP请求捕获token
-     */
-    private void hookHttpRequest(ClassLoader classLoader) {
-        try {
-            // Hook OkHttp Request.Builder.build()
-            XposedHelpers.findAndHookMethod(
-                "okhttp3.Request$Builder",
-                classLoader,
-                "build",
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            Object request = param.getResult();
-                            String url = (String) XposedHelpers.getObjectField(request, "url");
-                            
-                            if (url != null && isSignUrl(url)) {
-                                XposedBridge.log(TAG + "\n[=== 签到请求 ===]");
-                                XposedBridge.log(TAG + "URL: " + url);
-                                
-                                // 获取请求头
-                                try {
-                                    Object headers = XposedHelpers.getObjectField(request, "headers");
-                                    if (headers != null) {
-                                        XposedBridge.log(TAG + "Headers: " + headers.toString());
-                                    }
-                                } catch (Throwable e) {
-                                    // 忽略
-                                }
-                                
-                                XposedBridge.log(TAG + "===================\n");
-                                signCount++;
-                            }
-                        } catch (Throwable e) {
-                            // 忽略
+                        if (param.getThrowable() != null) {
+                            XposedBridge.log(TAG + "任务失败: " + param.getThrowable().getMessage());
+                        } else {
+                            XposedBridge.log(TAG + "任务完成!");
+                            taskCount++;
                         }
+                        XposedBridge.log(TAG + "===================\n");
                     }
-                }
-            );
-            
-            XposedBridge.log(TAG + "HTTP请求Hook成功");
-        } catch (Throwable e) {
-            XposedBridge.log(TAG + "HTTP请求Hook失败: " + e.getMessage());
+                });
+                XposedBridge.log(TAG + "Hook任务方法成功");
+            } catch (Throwable e) {
+                XposedBridge.log(TAG + "Hook任务方法失败: " + e.getMessage());
+            }
         }
-    }
-
-    /**
-     * 判断是否为签到URL
-     */
-    private boolean isSignUrl(String url) {
-        String lower = url.toLowerCase();
-        return lower.contains("sign_in") || lower.contains("signin") ||
-               lower.contains("task/done") || lower.contains("task_done") ||
-               lower.contains("reward") || lower.contains("claim") ||
-               lower.contains("luckycat");
     }
 
     /**
@@ -223,18 +171,76 @@ public class MainHook implements IXposedHookLoadPackage {
     private void startScheduler() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         
-        // 每30秒输出状态
+        // 每30秒尝试签到
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 XposedBridge.log(TAG + "状态: 签到=" + signCount + " 任务=" + taskCount);
                 
-                // 如果有WebView，尝试自动签到
-                if (webView != null) {
-                    injectJavaScript(webView);
+                // 尝试调用签到方法
+                if (signMethod != null && !isProcessing.get()) {
+                    isProcessing.set(true);
+                    tryAutoSign();
+                    isProcessing.set(false);
                 }
             } catch (Throwable e) {
-                // 忽略
+                XposedBridge.log(TAG + "定时任务异常: " + e.getMessage());
+                isProcessing.set(false);
             }
         }, 5, 30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 尝试自动签到
+     */
+    private void tryAutoSign() {
+        if (goldCoinRepoClass == null || signMethod == null) {
+            XposedBridge.log(TAG + "签到类或方法未找到");
+            return;
+        }
+        
+        XposedBridge.log(TAG + "尝试自动签到...");
+        
+        try {
+            // 尝试获取单例实例
+            Object instance = getInstance(goldCoinRepoClass);
+            if (instance != null) {
+                signMethod.setAccessible(true);
+                signMethod.invoke(instance);
+                XposedBridge.log(TAG + "调用签到方法成功");
+            } else {
+                XposedBridge.log(TAG + "无法获取GoldCoinRepo实例");
+            }
+        } catch (Throwable e) {
+            XposedBridge.log(TAG + "签到异常: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取类的单例实例
+     */
+    private Object getInstance(Class<?> clazz) {
+        try {
+            // 尝试INSTANCE字段
+            try {
+                var field = clazz.getDeclaredField("INSTANCE");
+                field.setAccessible(true);
+                return field.get(null);
+            } catch (NoSuchFieldException e) {
+                // 没有INSTANCE字段
+            }
+            
+            // 尝试Companion
+            try {
+                var companionField = clazz.getDeclaredField("Companion");
+                companionField.setAccessible(true);
+                return companionField.get(null);
+            } catch (NoSuchFieldException e) {
+                // 没有Companion字段
+            }
+            
+            return null;
+        } catch (Throwable e) {
+            return null;
+        }
     }
 }
