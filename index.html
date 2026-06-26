@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>番茄小说自动签到模块 - 下载</title>
+    <title>番茄小说自动签到模块 v3.0.0 - 下载</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -16,124 +16,162 @@
             padding: 20px;
         }
         .container {
-            background: white;
+            background: rgba(255,255,255,0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            max-width: 650px;
             width: 100%;
             padding: 40px;
-            text-align: center;
         }
-        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%); border-radius: 25px; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 28px; }
-        .version { color: #666; font-size: 16px; margin-bottom: 30px; }
-        .features { text-align: left; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; }
-        .features h3 { color: #333; margin-bottom: 15px; }
-        .features ul { list-style: none; }
-        .features li { padding: 8px 0; color: #555; display: flex; align-items: center; }
-        .features li::before { content: "✓"; color: #27ae60; font-weight: bold; margin-right: 10px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #e74c3c, #f39c12); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        h1 { color: #333; margin-bottom: 8px; font-size: 28px; }
+        .version { color: #666; font-size: 16px; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+        .badge-new { background: #e74c3c; color: white; }
+        .badge-auto { background: #27ae60; color: white; }
+        .features { background: #f8f9fa; border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .features h3 { color: #333; margin-bottom: 16px; font-size: 18px; }
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .feature-item { display: flex; align-items: center; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #27ae60; }
+        .feature-item .icon { font-size: 24px; margin-right: 12px; }
+        .feature-item .text { flex: 1; }
+        .feature-item .text h4 { color: #333; font-size: 14px; margin-bottom: 4px; }
+        .feature-item .text p { color: #666; font-size: 12px; }
+        .download-section { text-align: center; margin: 30px 0; }
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
-            padding: 15px 40px;
+            padding: 18px 50px;
             border-radius: 30px;
             text-decoration: none;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            margin: 20px 10px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            animation: pulse 2s infinite;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
         }
-        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4); }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
-        }
-        .info { margin-top: 30px; padding: 20px; background: #d4edda; border-radius: 10px; color: #155724; text-align: left; }
-        .info h4 { margin-bottom: 10px; }
-        .warning { margin-top: 15px; padding: 20px; background: #fff3cd; border-radius: 10px; color: #856404; text-align: left; }
-        .warning h4 { margin-bottom: 10px; }
-        .changelog { margin-top: 30px; text-align: left; padding: 20px; background: #e8f4f8; border-radius: 10px; }
-        .changelog h3 { color: #333; margin-bottom: 15px; }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
+        .download-btn:active { transform: translateY(0); }
+        .download-info { margin-top: 12px; color: #999; font-size: 14px; }
+        .info-card { background: #e8f5e9; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .info-card h4 { color: #2e7d32; margin-bottom: 12px; }
+        .info-card ul { list-style: none; padding: 0; }
+        .info-card li { padding: 8px 0; color: #555; display: flex; align-items: flex-start; }
+        .info-card li::before { content: "✓"; color: #4caf50; font-weight: bold; margin-right: 8px; }
+        .warning-card { background: #fff3cd; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .warning-card h4 { color: #856404; margin-bottom: 12px; }
+        .warning-card p { color: #555; margin-bottom: 8px; }
+        .log-card { background: #263238; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .log-card h4 { color: #4fc3f7; margin-bottom: 12px; }
+        .log-card code { display: block; background: #1a237e; color: #64ffda; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 13px; overflow-x: auto; }
+        .changelog { background: #e3f2fd; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .changelog h3 { color: #1565c0; margin-bottom: 16px; }
         .changelog ul { list-style: disc; padding-left: 20px; }
-        .changelog li { padding: 5px 0; color: #555; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 10px; }
-        .badge-new { background: #e74c3c; color: white; }
-        .tech-details { margin-top: 30px; text-align: left; }
-        .tech-details h3 { color: #333; margin-bottom: 15px; }
-        .tech-details table { width: 100%; border-collapse: collapse; }
-        .tech-details td, .tech-details th { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        .tech-details th { color: #666; font-weight: normal; }
-        .tech-details td { color: #333; font-weight: bold; }
-        footer { margin-top: 40px; color: #999; font-size: 14px; }
+        .changelog li { padding: 6px 0; color: #555; }
+        .tech-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .tech-table th, .tech-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .tech-table th { color: #666; font-weight: normal; }
+        .tech-table td { color: #333; font-weight: bold; }
+        footer { text-align: center; margin-top: 40px; color: #999; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🤖</div>
-        <h1>番茄小说自动签到模块</h1>
-        <p class="version">v2.0.0 · 自动签到/领取/任务</p>
+        <div class="header">
+            <div class="logo">🤖</div>
+            <h1>番茄小说自动签到模块</h1>
+            <div class="version">
+                v3.0.0
+                <span class="badge badge-new">NEW</span>
+                <span class="badge badge-auto">全自动</span>
+            </div>
+        </div>
         
         <div class="features">
-            <h3>功能特性</h3>
+            <h3>核心功能</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="icon">✅</div>
+                    <div class="text">
+                        <h4>自动签到</h4>
+                        <p>每日自动完成签到获取金币</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🎁</div>
+                    <div class="text">
+                        <h4>自动领取</h4>
+                        <p>自动领取所有可获得的奖励</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📋</div>
+                    <div class="text">
+                        <h4>自动任务</h4>
+                        <p>自动完成可运行的任务</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📊</div>
+                    <div class="text">
+                        <h4>运行日志</h4>
+                        <p>实时显示模块运行状态</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="download-section">
+            <a href="FanqieAuto-v3.0.0.apk" class="download-btn">
+                📥 下载 v3.0.0 (32KB)
+            </a>
+            <div class="download-info">支持所有版本 LSPosed / Xposed Framework</div>
+        </div>
+        
+        <div class="info-card">
+            <h4>✅ v3.0.0 更新内容</h4>
             <ul>
-                <li><strong>自动签到</strong> - 每日自动完成签到</li>
-                <li><strong>自动领取</strong> - 自动领取可获得的奖励</li>
-                <li><strong>自动任务</strong> - 自动完成可运行的任务</li>
-                <li><strong>智能监控</strong> - 实时监控签到和奖励状态</li>
-                <li><strong>日志记录</strong> - 详细记录所有操作</li>
+                <li><strong>自动签到</strong> - 每60秒检查并自动完成签到</li>
+                <li><strong>自动任务</strong> - 每120秒检查并自动完成任务</li>
+                <li><strong>自动领取</strong> - 每180秒检查并自动领取奖励</li>
+                <li><strong>运行日志</strong> - 软件界面实时显示运行日志</li>
+                <li><strong>任务统计</strong> - 显示签到/任务/奖励统计</li>
             </ul>
         </div>
         
-        <div>
-            <a href="FanqieAuto-v2.0.0.apk" class="download-btn">
-                📥 下载 v2.0.0 (30KB)
-            </a>
-        </div>
-        
-        <div class="info">
-            <h4>✅ v2.0.0 新增功能</h4>
-            <p>1. <strong>自动签到</strong> - 每30秒检查签到状态，自动完成签到</p>
-            <p>2. <strong>自动领取</strong> - 检测到可领取奖励时自动领取</p>
-            <p>3. <strong>自动任务</strong> - 检测到可完成任务时自动执行</p>
-            <p>4. <strong>定时检查</strong> - 后台定时检查各项状态</p>
-        </div>
-        
-        <div class="warning">
+        <div class="warning-card">
             <h4>⚠️ 使用说明</h4>
-            <p>1. 下载并安装 APK</p>
+            <p>1. 下载并安装 APK 安装包</p>
             <p>2. 在 LSPosed 中启用模块</p>
             <p>3. 设置作用域为「番茄免费小说」</p>
             <p>4. 重启番茄小说应用</p>
-            <p>5. 打开番茄小说，模块会自动运行</p>
+            <p>5. 打开模块查看运行日志</p>
         </div>
         
-        <div class="warning">
-            <h4>📊 查看日志</h4>
-            <p>adb logcat -s Xposed:* FanqieAuto:*</p>
+        <div class="log-card">
+            <h4>📊 查看日志命令</h4>
+            <code>adb logcat -s Xposed:* FanqieAuto:*</code>
         </div>
         
         <div class="changelog">
             <h3>更新日志</h3>
             <ul>
-                <li><strong>v2.0.0</strong> - 新增自动签到、自动领取、自动任务 <span class="badge badge-new">NEW</span></li>
+                <li><strong>v3.0.0</strong> - 全自动签到/任务/奖励，添加运行日志界面</li>
+                <li><strong>v2.0.0</strong> - 新增自动签到、自动领取、自动任务</li>
                 <li><strong>v1.0.4</strong> - 修复闪退问题</li>
                 <li><strong>v1.0.3</strong> - 修复LSPosed兼容性</li>
                 <li><strong>v1.0.0</strong> - 初始版本</li>
             </ul>
         </div>
         
-        <div class="tech-details">
-            <h3>技术细节</h3>
-            <table>
-                <tr><th>目标应用</th><td>com.dragon.read</td></tr>
-                <tr><th>APK大小</th><td>30 KB</td></tr>
-                <tr><th>自动签到</th><td>每30秒检查</td></tr>
-                <tr><th>自动领取</th><td>每60秒检查</td></tr>
-            </table>
-        </div>
+        <table class="tech-table">
+            <tr><th>目标应用</th><td>com.dragon.read (番茄小说)</td></tr>
+            <tr><th>APK大小</th><td>32 KB</td></tr>
+            <tr><th>自动签到</th><td>每60秒检查</td></tr>
+            <tr><th>自动任务</th><td>每120秒检查</td></tr>
+            <tr><th>自动领取</th><td>每180秒检查</td></tr>
+        </table>
         
         <footer>
             <p>开源项目 · 仅供学习研究使用</p>
