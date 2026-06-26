@@ -59,11 +59,11 @@
 ## Phase 3: UI界面重构
 
 ### 3.1 创建XML布局文件
-- [ ] 创建主界面布局activity_main.xml
-- [ ] 创建仪表盘布局fragment_dashboard.xml
-- [ ] 创建设置界面布局fragment_settings.xml
-- [ ] 创建日志界面布局fragment_log.xml
-- [ ] 创建主题样式文件
+- [x] 创建主界面布局activity_main.xml
+- [x] 创建仪表盘布局fragment_dashboard.xml
+- [x] 创建设置界面布局fragment_settings.xml
+- [x] 创建日志界面布局fragment_log.xml
+- [x] 创建主题样式文件
 
 ### 3.2 实现主Activity和Fragment
 - [ ] 创建MainActivity继承AppCompatActivity
