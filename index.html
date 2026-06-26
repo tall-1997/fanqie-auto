@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>番茄小说自动签到模块 v3.0.0 - 下载</title>
+    <title>番茄小说自动签到模块 v4.0.0 - 下载</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -52,7 +52,6 @@
             box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
         }
         .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
-        .download-btn:active { transform: translateY(0); }
         .download-info { margin-top: 12px; color: #999; font-size: 14px; }
         .info-card { background: #e8f5e9; border-radius: 12px; padding: 20px; margin: 20px 0; }
         .info-card h4 { color: #2e7d32; margin-bottom: 12px; }
@@ -82,7 +81,7 @@
             <div class="logo">🤖</div>
             <h1>番茄小说自动签到模块</h1>
             <div class="version">
-                v3.0.0
+                v4.0.0
                 <span class="badge badge-new">NEW</span>
                 <span class="badge badge-auto">全自动</span>
             </div>
@@ -95,82 +94,81 @@
                     <div class="icon">✅</div>
                     <div class="text">
                         <h4>自动签到</h4>
-                        <p>每日自动完成签到获取金币</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="icon">🎁</div>
-                    <div class="text">
-                        <h4>自动领取</h4>
-                        <p>自动领取所有可获得的奖励</p>
+                        <p>每30秒自动执行签到</p>
                     </div>
                 </div>
                 <div class="feature-item">
                     <div class="icon">📋</div>
                     <div class="text">
                         <h4>自动任务</h4>
-                        <p>自动完成可运行的任务</p>
+                        <p>每60秒自动完成任务</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🎁</div>
+                    <div class="text">
+                        <h4>自动奖励</h4>
+                        <p>每90秒自动领取奖励</p>
                     </div>
                 </div>
                 <div class="feature-item">
                     <div class="icon">📊</div>
                     <div class="text">
-                        <h4>运行日志</h4>
-                        <p>实时显示模块运行状态</p>
+                        <h4>实时日志</h4>
+                        <p>Xposed日志记录所有操作</p>
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="download-section">
-            <a href="FanqieAuto-v3.0.0.apk" class="download-btn">
-                📥 下载 v3.0.0 (32KB)
+            <a href="FanqieAuto-v4.0.0.apk" class="download-btn">
+                📥 下载 v4.0.0 (30KB)
             </a>
             <div class="download-info">支持所有版本 LSPosed / Xposed Framework</div>
         </div>
         
         <div class="info-card">
-            <h4>✅ v3.0.0 更新内容</h4>
+            <h4>✅ v4.0.0 核心功能</h4>
             <ul>
-                <li><strong>自动签到</strong> - 每60秒检查并自动完成签到</li>
-                <li><strong>自动任务</strong> - 每120秒检查并自动完成任务</li>
-                <li><strong>自动领取</strong> - 每180秒检查并自动领取奖励</li>
-                <li><strong>运行日志</strong> - 软件界面实时显示运行日志</li>
-                <li><strong>任务统计</strong> - 显示签到/任务/奖励统计</li>
+                <li><strong>自动签到</strong> - 调用 GoldCoinRepo.executeSignDoneRequest()</li>
+                <li><strong>自动任务</strong> - 调用 TaskDoneDataRepository.executeTaskDoneRequest()</li>
+                <li><strong>自动奖励</strong> - 调用 TreasureTaskDoneDataRepository.requestTreasureTaskDone()</li>
+                <li><strong>定时执行</strong> - 签到30秒/任务60秒/奖励90秒</li>
             </ul>
         </div>
         
         <div class="warning-card">
             <h4>⚠️ 使用说明</h4>
-            <p>1. 下载并安装 APK 安装包</p>
+            <p>1. 下载并安装 APK</p>
             <p>2. 在 LSPosed 中启用模块</p>
             <p>3. 设置作用域为「番茄免费小说」</p>
             <p>4. 重启番茄小说应用</p>
-            <p>5. 打开模块查看运行日志</p>
+            <p>5. 打开番茄小说，模块会自动运行</p>
         </div>
         
         <div class="log-card">
-            <h4>📊 查看日志命令</h4>
+            <h4>📊 查看日志</h4>
             <code>adb logcat -s Xposed:* FanqieAuto:*</code>
         </div>
         
         <div class="changelog">
             <h3>更新日志</h3>
             <ul>
-                <li><strong>v3.0.0</strong> - 全自动签到/任务/奖励，添加运行日志界面</li>
-                <li><strong>v2.0.0</strong> - 新增自动签到、自动领取、自动任务</li>
-                <li><strong>v1.0.4</strong> - 修复闪退问题</li>
-                <li><strong>v1.0.3</strong> - 修复LSPosed兼容性</li>
+                <li><strong>v4.0.0</strong> - 实现真正的自动签到/任务/奖励功能</li>
+                <li><strong>v3.1.0</strong> - 修复闪退，简化为监控模式</li>
+                <li><strong>v3.0.0</strong> - 全自动签到/任务/奖励（有闪退）</li>
+                <li><strong>v2.0.0</strong> - 新增自动功能</li>
                 <li><strong>v1.0.0</strong> - 初始版本</li>
             </ul>
         </div>
         
         <table class="tech-table">
             <tr><th>目标应用</th><td>com.dragon.read (番茄小说)</td></tr>
-            <tr><th>APK大小</th><td>32 KB</td></tr>
-            <tr><th>自动签到</th><td>每60秒检查</td></tr>
-            <tr><th>自动任务</th><td>每120秒检查</td></tr>
-            <tr><th>自动领取</th><td>每180秒检查</td></tr>
+            <tr><th>APK大小</th><td>30 KB</td></tr>
+            <tr><th>签到间隔</th><td>每30秒</td></tr>
+            <tr><th>任务间隔</th><td>每60秒</td></tr>
+            <tr><th>奖励间隔</th><td>每90秒</td></tr>
         </table>
         
         <footer>
