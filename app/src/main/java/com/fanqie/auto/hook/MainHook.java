@@ -6,15 +6,29 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
- * 番茄小说自动签到模块 v5.0.0
- * 监控并记录签到、任务、奖励
+ * 番茄小说自动签到模块 v6.0.0
+ * 深度Hook - 监控所有签到、任务、奖励相关方法
  */
 public class MainHook implements IXposedHookLoadPackage {
 
     private static final String TAG = "[FanqieAuto] ";
     private static final String TARGET_PACKAGE = "com.dragon.read";
-    private static final String MODULE_VERSION = "v5.0.0";
+    private static final String MODULE_VERSION = "v6.0.0";
+
+    private ClassLoader appClassLoader;
+    private ScheduledExecutorService scheduler;
+    
+    // 记录找到的方法
+    private List<String> foundMethods = new ArrayList<>();
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -22,15 +36,17 @@ public class MainHook implements IXposedHookLoadPackage {
 
         XposedBridge.log(TAG + "==============================");
         XposedBridge.log(TAG + "番茄小说自动签到模块 " + MODULE_VERSION);
-        XposedBridge.log(TAG + "目标应用: " + TARGET_PACKAGE);
+        XposedBridge.log(TAG + "深度Hook模式");
         XposedBridge.log(TAG + "==============================");
 
+        appClassLoader = lpparam.classLoader;
+
         try {
-            // Hook HTTP请求
-            hookOkHttpRequest(lpparam);
+            // 深度扫描并Hook所有相关类
+            deepScanAndHook(lpparam.classLoader);
             
-            // Hook JSON响应
-            hookJsonResponse(lpparam);
+            // 启动定时任务
+            startScheduler();
             
             XposedBridge.log(TAG + "Hook初始化完成");
         } catch (Throwable e) {
@@ -39,187 +55,187 @@ public class MainHook implements IXposedHookLoadPackage {
     }
 
     /**
-     * Hook OkHttp请求
+     * 深度扫描并Hook所有相关类
      */
-    private void hookOkHttpRequest(XC_LoadPackage.LoadPackageParam lpparam) {
-        try {
-            XposedHelpers.findAndHookMethod(
-                "okhttp3.Request$Builder",
-                lpparam.classLoader,
-                "build",
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            Object request = param.getResult();
-                            String url = (String) XposedHelpers.getObjectField(request, "url");
-                            if (url != null) {
-                                handleUrl(url);
+    private void deepScanAndHook(ClassLoader classLoader) {
+        // 签到相关类名模式
+        String[] signClassPatterns = {
+            "com.dragon.read.ug.kmp.readingstatistics.parts.goldcoin.GoldCoinRepo",
+            "com.dragon.read.ug.kmp.longsignin.viewmodel.LongSignInKlayViewModel",
+            "com.dragon.read.ug.kmp.newusersignin.viewmodel.NewUserSevenDaySignInViewModel",
+            "com.dragon.read.ug.kmp.alarmclock.repository.AlarmClockRepository",
+            "com.dragon.read.ug.kmp.common.repository.TaskDoneDataRepository",
+            "com.dragon.read.ug.kmp.treasurebox.repository.TreasureTaskDoneDataRepository",
+            "com.dragon.read.ug.kmp.dividegoldcoin.viewmodel.SecondFloorDivideGoldCoinViewModel"
+        };
+        
+        // 尝试Hook每个类
+        for (String className : signClassPatterns) {
+            try {
+                Class<?> clazz = classLoader.loadClass(className);
+                hookClassMethods(clazz, className);
+                XposedBridge.log(TAG + "已Hook类: " + className);
+            } catch (Throwable e) {
+                XposedBridge.log(TAG + "未找到类: " + className);
+            }
+        }
+    }
+
+    /**
+     * Hook类的所有相关方法
+     */
+    private void hookClassMethods(Class<?> clazz, String className) {
+        Method[] methods = clazz.getDeclaredMethods();
+        
+        for (Method method : methods) {
+            String methodName = method.getName();
+            
+            // 检查是否是相关方法
+            if (isRelevantMethod(methodName)) {
+                try {
+                    XposedBridge.hookMethod(method, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            XposedBridge.log(TAG + "\n[=== 方法调用 ===]");
+                            XposedBridge.log(TAG + "类: " + className);
+                            XposedBridge.log(TAG + "方法: " + methodName);
+                            
+                            // 记录参数
+                            if (param.args != null && param.args.length > 0) {
+                                for (int i = 0; i < param.args.length; i++) {
+                                    XposedBridge.log(TAG + "参数[" + i + "]: " + param.args[i]);
+                                }
                             }
-                        } catch (Throwable ignored) {}
-                    }
+                        }
+                        
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            if (param.getThrowable() != null) {
+                                XposedBridge.log(TAG + "异常: " + param.getThrowable().getMessage());
+                            } else {
+                                XposedBridge.log(TAG + "返回: " + param.getResult());
+                            }
+                            XposedBridge.log(TAG + "===================\n");
+                        }
+                    });
+                    
+                    foundMethods.add(className + "." + methodName);
+                    XposedBridge.log(TAG + "Hook方法: " + methodName);
+                } catch (Throwable e) {
+                    // 忽略
                 }
-            );
-            XposedBridge.log(TAG + "HTTP请求Hook成功");
-        } catch (Throwable e) {
-            XposedBridge.log(TAG + "HTTP请求Hook失败: " + e.getMessage());
+            }
         }
     }
 
     /**
-     * Hook JSON响应
+     * 检查是否是相关方法
      */
-    private void hookJsonResponse(XC_LoadPackage.LoadPackageParam lpparam) {
+    private boolean isRelevantMethod(String methodName) {
+        String lower = methodName.toLowerCase();
+        
+        // 签到相关
+        if (lower.contains("sign") || lower.contains("signin")) {
+            return true;
+        }
+        
+        // 任务相关
+        if (lower.contains("task") || lower.contains("done") || lower.contains("complete")) {
+            return true;
+        }
+        
+        // 奖励相关
+        if (lower.contains("reward") || lower.contains("claim") || lower.contains("coin")) {
+            return true;
+        }
+        
+        // 执行相关
+        if (lower.contains("execute") || lower.contains("request") || lower.contains("fetch")) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * 启动定时任务
+     */
+    private void startScheduler() {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        
+        // 每60秒输出状态
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                XposedBridge.log(TAG + "状态: 已找到 " + foundMethods.size() + " 个相关方法");
+                
+                // 尝试调用找到的方法
+                tryInvokeMethods();
+            } catch (Throwable e) {
+                XposedBridge.log(TAG + "定时任务异常: " + e.getMessage());
+            }
+        }, 10, 60, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 尝试调用找到的方法
+     */
+    private void tryInvokeMethods() {
+        if (appClassLoader == null) return;
+        
+        // 尝试调用签到方法
         try {
-            // Hook optInt
-            XposedHelpers.findAndHookMethod(
-                "org.json.JSONObject",
-                lpparam.classLoader,
-                "optInt",
-                String.class,
-                int.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+            Class<?> goldCoinRepoClass = appClassLoader.loadClass(
+                "com.dragon.read.ug.kmp.readingstatistics.parts.goldcoin.GoldCoinRepo");
+            
+            // 尝试获取实例
+            Object instance = getInstance(goldCoinRepoClass);
+            if (instance != null) {
+                // 尝试调用方法
+                for (Method method : goldCoinRepoClass.getDeclaredMethods()) {
+                    if (method.getName().contains("SignDone") || method.getName().contains("SignIn")) {
                         try {
-                            String key = (String) param.args[0];
-                            int value = (int) param.getResult();
-                            handleIntResponse(key, value);
-                        } catch (Throwable ignored) {}
+                            method.setAccessible(true);
+                            XposedBridge.log(TAG + "尝试调用: " + method.getName());
+                            method.invoke(instance);
+                            XposedBridge.log(TAG + "调用成功: " + method.getName());
+                        } catch (Throwable e) {
+                            XposedBridge.log(TAG + "调用失败: " + method.getName() + " - " + e.getMessage());
+                        }
                     }
                 }
-            );
-
-            // Hook optLong
-            XposedHelpers.findAndHookMethod(
-                "org.json.JSONObject",
-                lpparam.classLoader,
-                "optLong",
-                String.class,
-                long.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            String key = (String) param.args[0];
-                            long value = (long) param.getResult();
-                            handleLongResponse(key, value);
-                        } catch (Throwable ignored) {}
-                    }
-                }
-            );
-
-            // Hook optString
-            XposedHelpers.findAndHookMethod(
-                "org.json.JSONObject",
-                lpparam.classLoader,
-                "optString",
-                String.class,
-                String.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            String key = (String) param.args[0];
-                            String value = (String) param.getResult();
-                            handleStringResponse(key, value);
-                        } catch (Throwable ignored) {}
-                    }
-                }
-            );
-
-            XposedBridge.log(TAG + "JSON响应Hook成功");
+            }
         } catch (Throwable e) {
-            XposedBridge.log(TAG + "JSON响应Hook失败: " + e.getMessage());
+            // 忽略
         }
     }
 
     /**
-     * 处理URL
+     * 获取类的实例
      */
-    private void handleUrl(String url) {
-        String lower = url.toLowerCase();
-        
-        if (lower.contains("sign_in") || lower.contains("signin")) {
-            XposedBridge.log(TAG + "===== 签到请求 =====");
-            XposedBridge.log(TAG + "URL: " + url);
-            XposedBridge.log(TAG + "====================");
-        } else if (lower.contains("task/done")) {
-            XposedBridge.log(TAG + "===== 任务请求 =====");
-            XposedBridge.log(TAG + "URL: " + url);
-            XposedBridge.log(TAG + "====================");
-        } else if (lower.contains("reward") || lower.contains("claim")) {
-            XposedBridge.log(TAG + "===== 奖励请求 =====");
-            XposedBridge.log(TAG + "URL: " + url);
-            XposedBridge.log(TAG + "====================");
-        } else if (lower.contains("luckycat")) {
-            XposedBridge.log(TAG + "福利请求: " + url);
-        }
-    }
-
-    /**
-     * 处理整数响应
-     */
-    private void handleIntResponse(String key, int value) {
-        if (key == null) return;
-        
-        // 签到状态
-        if ("status".equals(key) && value == 1) {
-            XposedBridge.log(TAG + "签到成功!");
-        }
-        
-        // 金币
-        if (key.contains("coin") && value > 0 && value < 1000000) {
-            XposedBridge.log(TAG + "金币: " + key + " = " + value);
-        }
-        
-        // 奖励
-        if (key.contains("reward") && value > 0 && value < 1000000) {
-            XposedBridge.log(TAG + "奖励: " + key + " = " + value);
-        }
-        
-        // 任务
-        if (key.contains("task") && value > 0 && value < 1000) {
-            XposedBridge.log(TAG + "任务: " + key + " = " + value);
-        }
-    }
-
-    /**
-     * 处理长整数响应
-     */
-    private void handleLongResponse(String key, long value) {
-        if (key == null) return;
-        
-        if (key.contains("coin") && value > 0 && value < 1000000) {
-            XposedBridge.log(TAG + "金币: " + key + " = " + value);
-        }
-        if (key.contains("reward") && value > 0 && value < 1000000) {
-            XposedBridge.log(TAG + "奖励: " + key + " = " + value);
-        }
-    }
-
-    /**
-     * 处理字符串响应
-     */
-    private void handleStringResponse(String key, String value) {
-        if (key == null || value == null || value.isEmpty()) return;
-        
-        // 签到状态
-        if ("todaySigned".equals(key)) {
-            XposedBridge.log(TAG + "今日签到: " + value);
-        }
-        if (key.contains("sign") && key.contains("status")) {
-            XposedBridge.log(TAG + "签到状态: " + value);
-        }
-        
-        // 奖励名称
-        if (key.contains("reward") && key.contains("name")) {
-            XposedBridge.log(TAG + "奖励: " + value);
-        }
-        
-        // 任务名称
-        if (key.contains("task") && key.contains("name")) {
-            XposedBridge.log(TAG + "任务: " + value);
+    private Object getInstance(Class<?> clazz) {
+        try {
+            // 尝试INSTANCE字段
+            try {
+                var field = clazz.getDeclaredField("INSTANCE");
+                field.setAccessible(true);
+                return field.get(null);
+            } catch (NoSuchFieldException e) {
+                // 没有INSTANCE字段
+            }
+            
+            // 尝试Companion
+            try {
+                var companionField = clazz.getDeclaredField("Companion");
+                companionField.setAccessible(true);
+                return companionField.get(null);
+            } catch (NoSuchFieldException e) {
+                // 没有Companion字段
+            }
+            
+            // 尝试newInstance
+            return clazz.newInstance();
+        } catch (Throwable e) {
+            return null;
         }
     }
 }
