@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>番茄小说自动签到模块 - 下载</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -28,56 +24,17 @@
             padding: 40px;
             text-align: center;
         }
-        .logo {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
-            border-radius: 25px;
-            margin: 0 auto 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        .version {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-        .features {
-            text-align: left;
-            margin: 30px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-        .features h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .features ul {
-            list-style: none;
-        }
-        .features li {
-            padding: 8px 0;
-            color: #555;
-            display: flex;
-            align-items: center;
-        }
-        .features li::before {
-            content: "✓";
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 10px;
-        }
+        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%); border-radius: 25px; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 28px; }
+        .version { color: #666; font-size: 16px; margin-bottom: 30px; }
+        .features { text-align: left; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; }
+        .features h3 { color: #333; margin-bottom: 15px; }
+        .features ul { list-style: none; }
+        .features li { padding: 8px 0; color: #555; display: flex; align-items: center; }
+        .features li::before { content: "✓"; color: #27ae60; font-weight: bold; margin-right: 10px; }
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
             color: white;
             padding: 15px 40px;
             border-radius: 30px;
@@ -86,147 +43,84 @@
             font-weight: bold;
             margin: 20px 10px;
             transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-        .download-btn.latest {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
             animation: pulse 2s infinite;
         }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4); }
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
             70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); }
             100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
         }
-        .info {
-            margin-top: 30px;
-            padding: 20px;
-            background: #d4edda;
-            border-radius: 10px;
-            color: #155724;
-        }
-        .info h4 {
-            margin-bottom: 10px;
-        }
-        .tech-details {
-            margin-top: 30px;
-            text-align: left;
-        }
-        .tech-details h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .tech-details table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .tech-details td, .tech-details th {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-        }
-        .tech-details th {
-            color: #666;
-            font-weight: normal;
-        }
-        .tech-details td {
-            color: #333;
-            font-weight: bold;
-        }
-        footer {
-            margin-top: 40px;
-            color: #999;
-            font-size: 14px;
-        }
-        .changelog {
-            margin-top: 30px;
-            text-align: left;
-            padding: 20px;
-            background: #e8f4f8;
-            border-radius: 10px;
-        }
-        .changelog h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .changelog ul {
-            list-style: disc;
-            padding-left: 20px;
-        }
-        .changelog li {
-            padding: 5px 0;
-            color: #555;
-        }
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        .badge-fix {
-            background: #27ae60;
-            color: white;
-        }
-        .badge-new {
-            background: #e74c3c;
-            color: white;
-        }
+        .info { margin-top: 30px; padding: 20px; background: #d4edda; border-radius: 10px; color: #155724; text-align: left; }
+        .info h4 { margin-bottom: 10px; }
+        .warning { margin-top: 15px; padding: 20px; background: #fff3cd; border-radius: 10px; color: #856404; text-align: left; }
+        .warning h4 { margin-bottom: 10px; }
+        .changelog { margin-top: 30px; text-align: left; padding: 20px; background: #e8f4f8; border-radius: 10px; }
+        .changelog h3 { color: #333; margin-bottom: 15px; }
+        .changelog ul { list-style: disc; padding-left: 20px; }
+        .changelog li { padding: 5px 0; color: #555; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+        .badge-new { background: #e74c3c; color: white; }
+        .tech-details { margin-top: 30px; text-align: left; }
+        .tech-details h3 { color: #333; margin-bottom: 15px; }
+        .tech-details table { width: 100%; border-collapse: collapse; }
+        .tech-details td, .tech-details th { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        .tech-details th { color: #666; font-weight: normal; }
+        .tech-details td { color: #333; font-weight: bold; }
+        footer { margin-top: 40px; color: #999; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">📱</div>
+        <div class="logo">🤖</div>
         <h1>番茄小说自动签到模块</h1>
-        <p class="version">v1.0.4 · 已修复闪退问题</p>
+        <p class="version">v2.0.0 · 自动签到/领取/任务</p>
         
         <div class="features">
             <h3>功能特性</h3>
             <ul>
-                <li>自动监控签到接口</li>
-                <li>自动监控任务接口</li>
-                <li>智能识别金币奖励</li>
-                <li>HTTP请求日志记录</li>
-                <li>签到结果实时通知</li>
-                <li>支持多种签到方式</li>
+                <li><strong>自动签到</strong> - 每日自动完成签到</li>
+                <li><strong>自动领取</strong> - 自动领取可获得的奖励</li>
+                <li><strong>自动任务</strong> - 自动完成可运行的任务</li>
+                <li><strong>智能监控</strong> - 实时监控签到和奖励状态</li>
+                <li><strong>日志记录</strong> - 详细记录所有操作</li>
             </ul>
         </div>
         
         <div>
-            <a href="FanqieAuto-v1.0.4.apk" class="download-btn latest">
-                📥 下载最新版 v1.0.4 (27KB)
+            <a href="FanqieAuto-v2.0.0.apk" class="download-btn">
+                📥 下载 v2.0.0 (30KB)
             </a>
         </div>
         
         <div class="info">
-            <h4>✅ 问题已修复</h4>
-            <p><strong>v1.0.4</strong> 修复了打开软件闪退的问题。</p>
-            <p>模块已在后台正常运行，请查看日志确认。</p>
+            <h4>✅ v2.0.0 新增功能</h4>
+            <p>1. <strong>自动签到</strong> - 每30秒检查签到状态，自动完成签到</p>
+            <p>2. <strong>自动领取</strong> - 检测到可领取奖励时自动领取</p>
+            <p>3. <strong>自动任务</strong> - 检测到可完成任务时自动执行</p>
+            <p>4. <strong>定时检查</strong> - 后台定时检查各项状态</p>
         </div>
         
-        <div class="info" style="margin-top: 15px; background: #fff3cd; color: #856404;">
-            <h4>📋 使用说明</h4>
-            <p>1. 下载并安装 APK 安装包</p>
+        <div class="warning">
+            <h4>⚠️ 使用说明</h4>
+            <p>1. 下载并安装 APK</p>
             <p>2. 在 LSPosed 中启用模块</p>
             <p>3. 设置作用域为「番茄免费小说」</p>
             <p>4. 重启番茄小说应用</p>
-            <p>5. 查看日志确认模块运行</p>
+            <p>5. 打开番茄小说，模块会自动运行</p>
         </div>
         
-        <div class="info" style="margin-top: 15px; background: #e8f4f8; color: #0c5460;">
-            <h4>📊 查看日志命令</h4>
+        <div class="warning">
+            <h4>📊 查看日志</h4>
             <p>adb logcat -s Xposed:* FanqieAuto:*</p>
         </div>
         
         <div class="changelog">
             <h3>更新日志</h3>
             <ul>
-                <li><strong>v1.0.4</strong> - 修复打开软件闪退问题 <span class="badge badge-fix">FIX</span></li>
+                <li><strong>v2.0.0</strong> - 新增自动签到、自动领取、自动任务 <span class="badge badge-new">NEW</span></li>
+                <li><strong>v1.0.4</strong> - 修复闪退问题</li>
                 <li><strong>v1.0.3</strong> - 修复LSPosed兼容性</li>
-                <li><strong>v1.0.2</strong> - 升级libxposed API（已废弃）</li>
                 <li><strong>v1.0.0</strong> - 初始版本</li>
             </ul>
         </div>
@@ -234,22 +128,10 @@
         <div class="tech-details">
             <h3>技术细节</h3>
             <table>
-                <tr>
-                    <th>目标应用</th>
-                    <td>com.dragon.read (番茄小说)</td>
-                </tr>
-                <tr>
-                    <th>Xposed API</th>
-                    <td>XposedBridge API 82</td>
-                </tr>
-                <tr>
-                    <th>APK大小</th>
-                    <td>27 KB</td>
-                </tr>
-                <tr>
-                    <th>Hook状态</th>
-                    <td>HTTP请求 + 签到响应</td>
-                </tr>
+                <tr><th>目标应用</th><td>com.dragon.read</td></tr>
+                <tr><th>APK大小</th><td>30 KB</td></tr>
+                <tr><th>自动签到</th><td>每30秒检查</td></tr>
+                <tr><th>自动领取</th><td>每60秒检查</td></tr>
             </table>
         </div>
         
