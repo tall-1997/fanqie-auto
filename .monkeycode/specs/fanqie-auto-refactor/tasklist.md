@@ -30,11 +30,11 @@
 ## Phase 2: Hook功能重构
 
 ### 2.1 重构HTTP Hook
-- [ ] 创建HttpHook类继承BaseHook
-- [ ] 实现HTTP请求拦截
-- [ ] 实现HTTP响应拦截
-- [ ] 添加请求/响应修改能力
-- [ ] 实现请求统计
+- [x] 创建HttpHook类继承BaseHook
+- [x] 实现HTTP请求拦截
+- [x] 实现HTTP响应拦截
+- [x] 添加请求/响应修改能力
+- [x] 实现请求统计
 
 ### 2.2 重构签到Hook
 - [ ] 创建SignHook类继承BaseHook
