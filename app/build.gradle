@@ -10,8 +10,8 @@ android {
         applicationId "com.fanqie.auto"
         minSdk 26
         targetSdk 34
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.3"
     }
 
     buildTypes {
@@ -28,8 +28,8 @@ android {
 }
 
 dependencies {
-    // libxposed API 102
-    compileOnly 'io.github.libxposed:api:102.0.0'
+    // Xposed API (兼容旧版LSPosed)
+    compileOnly 'de.robv.android.xposed:api:82'
     
     // AndroidX
     implementation 'androidx.appcompat:appcompat:1.6.1'

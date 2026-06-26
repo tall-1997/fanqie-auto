@@ -91,12 +91,6 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
-        .download-btn.secondary {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-        .download-btn.apk {
-            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
-        }
         .download-btn.latest {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             animation: pulse 2s infinite;
@@ -109,21 +103,11 @@
         .info {
             margin-top: 30px;
             padding: 20px;
-            background: #fff3cd;
+            background: #d4edda;
             border-radius: 10px;
-            color: #856404;
+            color: #155724;
         }
         .info h4 {
-            margin-bottom: 10px;
-        }
-        .warning {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8d7da;
-            border-radius: 10px;
-            color: #721c24;
-        }
-        .warning h4 {
             margin-bottom: 10px;
         }
         .tech-details {
@@ -187,8 +171,8 @@
             background: #e74c3c;
             color: white;
         }
-        .badge-old {
-            background: #95a5a6;
+        .badge-fix {
+            background: #27ae60;
             color: white;
         }
     </style>
@@ -197,7 +181,7 @@
     <div class="container">
         <div class="logo">📱</div>
         <h1>番茄小说自动签到模块</h1>
-        <p class="version">v1.0.2 · 基于 libxposed API 102</p>
+        <p class="version">v1.0.3 · 兼容所有版本 LSPosed</p>
         
         <div class="features">
             <h3>功能特性</h3>
@@ -214,40 +198,33 @@
         </div>
         
         <div>
-            <a href="FanqieAuto-v1.0.2.apk" class="download-btn latest">
-                📥 下载最新版 v1.0.2
+            <a href="FanqieAuto-v1.0.3.apk" class="download-btn latest">
+                📥 下载最新版 v1.0.3
             </a>
-        </div>
-        <div>
-            <a href="FanqieAuto-v1.0.0.apk" class="download-btn apk">
-                📦 旧版 v1.0.0
-            </a>
-            <a href="https://github.com/zhaoxuya520/fanqie-auto-sign" class="download-btn">
-                📦 源代码
-            </a>
-        </div>
-        
-        <div class="warning">
-            <h4>⚠️ 重要提示</h4>
-            <p><strong>v1.0.2</strong> 需要支持 <strong>libxposed API 102</strong> 的 LSPosed 版本。</p>
-            <p>如果您的 LSPosed 版本较旧，请使用 <strong>v1.0.0</strong>（兼容旧版 Xposed API）。</p>
         </div>
         
         <div class="info">
+            <h4>✅ 兼容性说明</h4>
+            <p>v1.0.3 已修复兼容性问题，<strong>支持所有版本的 LSPosed</strong>（包括旧版）。</p>
+            <p>如果之前版本无法使用，请重新下载此版本。</p>
+        </div>
+        
+        <div class="info" style="margin-top: 15px; background: #fff3cd; color: #856404;">
             <h4>📋 使用说明</h4>
             <p>1. 下载并安装 APK 安装包</p>
             <p>2. 在 LSPosed 中启用模块</p>
             <p>3. 设置作用域为「番茄免费小说」</p>
-            <p>4. 重启番茄小说应用</p>
-            <p>5. 查看 Xposed 日志获取运行状态</p>
+            <p>4. <strong>重启手机</strong>（重要！）</p>
+            <p>5. 打开番茄小说，查看日志确认生效</p>
         </div>
         
         <div class="changelog">
             <h3>更新日志</h3>
             <ul>
-                <li><strong>v1.0.2</strong> - 升级到 libxposed API 102 <span class="badge badge-new">NEW</span></li>
+                <li><strong>v1.0.3</strong> - 修复兼容性问题，支持所有版本LSPosed <span class="badge badge-fix">FIX</span></li>
+                <li><strong>v1.0.2</strong> - 升级到 libxposed API 102（已废弃）</li>
                 <li><strong>v1.0.1</strong> - 修复兼容性问题</li>
-                <li><strong>v1.0.0</strong> - 初始版本，支持旧版 Xposed API</li>
+                <li><strong>v1.0.0</strong> - 初始版本</li>
             </ul>
         </div>
         
@@ -260,7 +237,7 @@
                 </tr>
                 <tr>
                     <th>Xposed API</th>
-                    <td>libxposed API 102</td>
+                    <td>XposedBridge API 82</td>
                 </tr>
                 <tr>
                     <th>最低Android版本</th>
@@ -268,11 +245,11 @@
                 </tr>
                 <tr>
                     <th>Hook点</th>
-                    <td>OkHttp3 Request Builder</td>
+                    <td>OkHttp3 Request Builder + JSONObject</td>
                 </tr>
                 <tr>
                     <th>监控字段</th>
-                    <td>status, coin, gold, reward, obtain, goldcoin, coinAmount, coinCount, award</td>
+                    <td>status, coin, gold, reward, obtain 等</td>
                 </tr>
                 <tr>
                     <th>APK大小</th>
@@ -283,7 +260,6 @@
         
         <footer>
             <p>开源项目 · 仅供学习研究使用</p>
-            <p>基于 Apache License 2.0 许可证</p>
         </footer>
     </div>
 </body>

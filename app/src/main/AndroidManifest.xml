@@ -11,25 +11,23 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:label="番茄签到模块">
+            android:label="番茄签到模块"
+            android:process=":xposed_module">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- libxposed API 102 元数据 -->
+        <!-- Xposed 元数据 -->
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="番茄小说自动签到模块 v1.0.2 - libxposed API 102" />
+            android:value="番茄小说自动签到模块 v1.0.3" />
         <meta-data
             android:name="xposedminversion"
-            android:value="102" />
-        <meta-data
-            android:name="xposedapiversion"
-            android:value="102" />
+            android:value="82" />
     </application>
 </manifest>
