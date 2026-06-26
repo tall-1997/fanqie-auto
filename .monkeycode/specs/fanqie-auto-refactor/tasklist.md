@@ -3,9 +3,9 @@
 ## Phase 1: 基础架构重构
 
 ### 1.1 创建模块化目录结构
-- [ ] 创建新的包结构：config、hook、ui、utils、model
-- [ ] 移动现有文件到对应包
-- [ ] 更新包引用
+- [x] 创建新的包结构：config、hook、ui、utils、model
+- [x] 移动现有文件到对应包
+- [x] 更新包引用
 
 ### 1.2 实现配置管理器
 - [ ] 创建ConfigManager类
