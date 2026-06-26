@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         
         // 版本
         TextView version = new TextView(this);
-        version.setText("v10.0.0 | 直接HTTP请求模式");
+        version.setText("v11.0.0 | WebView JavaScript模式");
         version.setTextSize(14);
         version.setTextColor(Color.parseColor("#4CAF50"));
         version.setGravity(Gravity.CENTER);
