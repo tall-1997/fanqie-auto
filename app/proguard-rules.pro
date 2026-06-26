@@ -1,0 +1,2 @@
+-keep class com.fanqie.auto.MainHook { *; }
+-keep class de.robv.android.xposed.** { *; }
