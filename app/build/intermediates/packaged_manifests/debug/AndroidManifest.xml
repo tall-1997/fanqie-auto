@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fanqie.auto"
-    android:versionCode="4"
-    android:versionName="1.0.3" >
+    android:versionCode="5"
+    android:versionName="1.0.4" >
 
     <uses-sdk
         android:minSdkVersion="26"
@@ -10,14 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <permission
-        android:name="com.fanqie.auto.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.fanqie.auto.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-
     <application
-        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
         android:icon="@drawable/icon"
@@ -26,8 +19,7 @@
         <activity
             android:name="com.fanqie.auto.ui.MainActivity"
             android:exported="true"
-            android:label="番茄签到模块"
-            android:process=":xposed_module" >
+            android:label="番茄签到模块" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,25 +37,6 @@
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.fanqie.auto.androidx-startup"
-            android:exported="false" >
-            <meta-data
-                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-                android:value="androidx.startup" />
-            <meta-data
-                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-                android:value="androidx.startup" />
-        </provider>
-
-        <uses-library
-            android:name="androidx.window.extensions"
-            android:required="false" />
-        <uses-library
-            android:name="androidx.window.sidecar"
-            android:required="false" />
     </application>
 
 </manifest>

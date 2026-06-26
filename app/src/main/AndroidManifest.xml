@@ -11,8 +11,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:label="番茄签到模块"
-            android:process=":xposed_module">
+            android:label="番茄签到模块">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
