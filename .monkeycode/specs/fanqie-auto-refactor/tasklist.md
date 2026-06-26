@@ -72,23 +72,23 @@
 - [x] 添加主题切换支持
 
 ### 3.3 实现仪表盘Fragment
-- [ ] 创建DashboardFragment
-- [ ] 显示模块状态信息
-- [ ] 显示签到统计信息
-- [ ] 添加快速操作按钮
+- [x] 创建DashboardFragment
+- [x] 显示模块状态信息
+- [x] 显示签到统计信息
+- [x] 添加快速操作按钮
 
 ### 3.4 实现设置界面
-- [ ] 创建SettingsFragment继承PreferenceFragmentCompat
-- [ ] 实现配置开关控制
-- [ ] 添加高级设置选项
-- [ ] 实现配置导入/导出
+- [x] 创建SettingsFragment继承PreferenceFragmentCompat
+- [x] 实现配置开关控制
+- [x] 添加高级设置选项
+- [x] 实现配置导入/导出
 
 ### 3.5 实现日志查看界面
-- [ ] 创建LogFragment
-- [ ] 实现日志列表显示
-- [ ] 添加日志过滤功能
-- [ ] 实现日志搜索
-- [ ] 添加日志导出功能
+- [x] 创建LogFragment
+- [x] 实现日志列表显示
+- [x] 添加日志过滤功能
+- [x] 实现日志搜索
+- [x] 添加日志导出功能
 
 ## Phase 4: 功能增强
 
