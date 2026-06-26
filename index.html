@@ -94,6 +94,9 @@
         .download-btn.secondary {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
+        .download-btn.apk {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+        }
         .info {
             margin-top: 30px;
             padding: 20px;
@@ -134,6 +137,25 @@
             color: #999;
             font-size: 14px;
         }
+        .changelog {
+            margin-top: 30px;
+            text-align: left;
+            padding: 20px;
+            background: #e8f4f8;
+            border-radius: 10px;
+        }
+        .changelog h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .changelog ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+        .changelog li {
+            padding: 5px 0;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -151,12 +173,19 @@
                 <li>HTTP请求日志记录</li>
                 <li>签到结果实时通知</li>
                 <li>支持多种签到方式</li>
+                <li>支持闹钟签到</li>
+                <li>支持低活跃用户签到</li>
             </ul>
         </div>
         
         <div>
+            <a href="FanqieAuto-v1.0.0.apk" class="download-btn apk">
+                📥 下载 APK 安装包
+            </a>
+        </div>
+        <div>
             <a href="https://github.com/zhaoxuya520/fanqie-auto-sign" class="download-btn">
-                📥 下载源代码
+                📦 源代码
             </a>
             <a href="https://github.com/libxposed/api" class="download-btn secondary">
                 📚 libxposed API
@@ -167,6 +196,20 @@
             <h4>⚠️ 使用说明</h4>
             <p>本模块需要 LSPosed 框架支持，请确保已正确安装 LSPosed。</p>
             <p>使用前请在 LSPosed 中启用模块并设置作用域为「番茄免费小说」。</p>
+            <p>安装后重启番茄小说应用即可生效。</p>
+        </div>
+        
+        <div class="changelog">
+            <h3>更新日志</h3>
+            <ul>
+                <li>升级到 libxposed API 101</li>
+                <li>优化签到逻辑，支持更多签到方式</li>
+                <li>增强金币字段匹配（coin, gold, goldcoin, coinAmount, coinCount, reward, award）</li>
+                <li>添加任务响应Hook</li>
+                <li>改进URL匹配规则</li>
+                <li>添加闹钟签到支持</li>
+                <li>添加低活跃用户签到支持</li>
+            </ul>
         </div>
         
         <div class="tech-details">
@@ -190,7 +233,11 @@
                 </tr>
                 <tr>
                     <th>监控字段</th>
-                    <td>status, coin, gold, reward, obtain</td>
+                    <td>status, coin, gold, reward, obtain, goldcoin, coinAmount, coinCount, award</td>
+                </tr>
+                <tr>
+                    <th>APK大小</th>
+                    <td>5.5 MB</td>
                 </tr>
             </table>
         </div>

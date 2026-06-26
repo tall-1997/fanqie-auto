@@ -93,8 +93,8 @@ public class LogManager {
                 break;
         }
         
-        // 输出到Xposed日志
-        de.robv.android.xposed.XposedBridge.log(TAG + message);
+        // 输出到Xposed日志（使用Android Log代替）
+        Log.i(LOG_TAG, TAG + message);
         
         // 写入文件
         writeToFile(entry);

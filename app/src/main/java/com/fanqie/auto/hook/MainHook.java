@@ -2,6 +2,7 @@ package com.fanqie.auto.hook;
 
 import java.lang.reflect.Method;
 
+import androidx.annotation.NonNull;
 import io.github.libxposed.api.XposedModule;
 import io.github.libxposed.api.XposedModuleInterface;
 
@@ -48,7 +49,7 @@ public class MainHook extends XposedModule implements XposedModuleInterface {
     };
 
     @Override
-    public void onPackageLoaded(@NonNull PackageLoadedParam param) {
+    public void onPackageReady(@NonNull PackageReadyParam param) {
         if (!param.getPackageName().equals(TARGET_PACKAGE)) return;
 
         log(TAG + "==============================");

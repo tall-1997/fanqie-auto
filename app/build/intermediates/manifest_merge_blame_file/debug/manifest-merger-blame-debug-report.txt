@@ -1,0 +1,120 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.fanqie.auto"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/workspace/app/src/main/AndroidManifest.xml:4:5-67
+11-->/workspace/app/src/main/AndroidManifest.xml:4:22-64
+12
+13    <permission
+13-->[androidx.core:core:1.9.0] /root/.gradle/caches/transforms-3/7a930d46f2a5d638c8e1f739bf6bd0ef/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+14        android:name="com.fanqie.auto.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+14-->[androidx.core:core:1.9.0] /root/.gradle/caches/transforms-3/7a930d46f2a5d638c8e1f739bf6bd0ef/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+15        android:protectionLevel="signature" />
+15-->[androidx.core:core:1.9.0] /root/.gradle/caches/transforms-3/7a930d46f2a5d638c8e1f739bf6bd0ef/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+16
+17    <uses-permission android:name="com.fanqie.auto.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+17-->[androidx.core:core:1.9.0] /root/.gradle/caches/transforms-3/7a930d46f2a5d638c8e1f739bf6bd0ef/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+17-->[androidx.core:core:1.9.0] /root/.gradle/caches/transforms-3/7a930d46f2a5d638c8e1f739bf6bd0ef/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+18
+19    <application
+19-->/workspace/app/src/main/AndroidManifest.xml:6:5-34:19
+20        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+20-->[androidx.core:core:1.9.0] /root/.gradle/caches/transforms-3/7a930d46f2a5d638c8e1f739bf6bd0ef/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+21        android:debuggable="true"
+22        android:extractNativeLibs="false"
+23        android:icon="@drawable/icon"
+23-->/workspace/app/src/main/AndroidManifest.xml:8:9-38
+24        android:label="FanqieAuto"
+24-->/workspace/app/src/main/AndroidManifest.xml:7:9-35
+25        android:theme="@android:style/Theme.Material.Light.DarkActionBar" >
+25-->/workspace/app/src/main/AndroidManifest.xml:9:9-74
+26        <activity
+26-->/workspace/app/src/main/AndroidManifest.xml:11:9-19:20
+27            android:name="com.fanqie.auto.ui.MainActivity"
+27-->/workspace/app/src/main/AndroidManifest.xml:12:13-44
+28            android:exported="true"
+28-->/workspace/app/src/main/AndroidManifest.xml:13:13-36
+29            android:label="番茄签到模块" >
+29-->/workspace/app/src/main/AndroidManifest.xml:14:13-35
+30            <intent-filter>
+30-->/workspace/app/src/main/AndroidManifest.xml:15:13-18:29
+31                <action android:name="android.intent.action.MAIN" />
+31-->/workspace/app/src/main/AndroidManifest.xml:16:17-69
+31-->/workspace/app/src/main/AndroidManifest.xml:16:25-66
+32
+33                <category android:name="android.intent.category.LAUNCHER" />
+33-->/workspace/app/src/main/AndroidManifest.xml:17:17-77
+33-->/workspace/app/src/main/AndroidManifest.xml:17:27-74
+34            </intent-filter>
+35        </activity>
+36
+37        <!-- libxposed API 元数据 -->
+38        <meta-data
+38-->/workspace/app/src/main/AndroidManifest.xml:22:9-24:36
+39            android:name="xposedmodule"
+39-->/workspace/app/src/main/AndroidManifest.xml:23:13-40
+40            android:value="true" />
+40-->/workspace/app/src/main/AndroidManifest.xml:24:13-33
+41        <meta-data
+41-->/workspace/app/src/main/AndroidManifest.xml:25:9-27:71
+42            android:name="xposeddescription"
+42-->/workspace/app/src/main/AndroidManifest.xml:26:13-45
+43            android:value="番茄小说自动签到模块 v1.0.0 - 基于libxposed API 101" />
+43-->/workspace/app/src/main/AndroidManifest.xml:27:13-68
+44        <meta-data
+44-->/workspace/app/src/main/AndroidManifest.xml:28:9-30:35
+45            android:name="xposedminversion"
+45-->/workspace/app/src/main/AndroidManifest.xml:29:13-44
+46            android:value="101" />
+46-->/workspace/app/src/main/AndroidManifest.xml:30:13-32
+47        <meta-data
+47-->/workspace/app/src/main/AndroidManifest.xml:31:9-33:35
+48            android:name="xposedapiversion"
+48-->/workspace/app/src/main/AndroidManifest.xml:32:13-44
+49            android:value="101" />
+49-->/workspace/app/src/main/AndroidManifest.xml:33:13-32
+50
+51        <provider
+51-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+52            android:name="androidx.startup.InitializationProvider"
+52-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+53            android:authorities="com.fanqie.auto.androidx-startup"
+53-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+54            android:exported="false" >
+54-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+55            <meta-data
+55-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+56                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+56-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+57                android:value="androidx.startup" />
+57-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/a2ce448d3722ab13d885c7dcffbce68a/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+58            <meta-data
+58-->[androidx.lifecycle:lifecycle-process:2.4.1] /root/.gradle/caches/transforms-3/d13e2b9014fee847b2f3184c6e64b40e/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+59                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+59-->[androidx.lifecycle:lifecycle-process:2.4.1] /root/.gradle/caches/transforms-3/d13e2b9014fee847b2f3184c6e64b40e/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+60                android:value="androidx.startup" />
+60-->[androidx.lifecycle:lifecycle-process:2.4.1] /root/.gradle/caches/transforms-3/d13e2b9014fee847b2f3184c6e64b40e/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+61        </provider>
+62
+63        <uses-library
+63-->[androidx.window:window:1.0.0] /root/.gradle/caches/transforms-3/4c5ccca138411412139b3e51c17ec362/transformed/jetified-window-1.0.0/AndroidManifest.xml:25:9-27:40
+64            android:name="androidx.window.extensions"
+64-->[androidx.window:window:1.0.0] /root/.gradle/caches/transforms-3/4c5ccca138411412139b3e51c17ec362/transformed/jetified-window-1.0.0/AndroidManifest.xml:26:13-54
+65            android:required="false" />
+65-->[androidx.window:window:1.0.0] /root/.gradle/caches/transforms-3/4c5ccca138411412139b3e51c17ec362/transformed/jetified-window-1.0.0/AndroidManifest.xml:27:13-37
+66        <uses-library
+66-->[androidx.window:window:1.0.0] /root/.gradle/caches/transforms-3/4c5ccca138411412139b3e51c17ec362/transformed/jetified-window-1.0.0/AndroidManifest.xml:28:9-30:40
+67            android:name="androidx.window.sidecar"
+67-->[androidx.window:window:1.0.0] /root/.gradle/caches/transforms-3/4c5ccca138411412139b3e51c17ec362/transformed/jetified-window-1.0.0/AndroidManifest.xml:29:13-51
+68            android:required="false" />
+68-->[androidx.window:window:1.0.0] /root/.gradle/caches/transforms-3/4c5ccca138411412139b3e51c17ec362/transformed/jetified-window-1.0.0/AndroidManifest.xml:30:13-37
+69    </application>
+70
+71</manifest>

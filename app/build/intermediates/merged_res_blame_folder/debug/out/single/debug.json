@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/drawable_icon.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/drawable/icon.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/drawable_ic_settings.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/drawable/ic_settings.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/menu_bottom_navigation_menu.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/menu/bottom_navigation_menu.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/drawable_ic_dashboard.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/drawable/ic_dashboard.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/drawable_ic_logs.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/drawable/ic_logs.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/layout_fragment_log.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/layout/fragment_log.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/xml_preferences.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/xml/preferences.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/layout_item_log.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/layout/item_log.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/layout_fragment_dashboard.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/layout/fragment_dashboard.xml"
+    },
+    {
+        "merged": "com.fanqie.auto.app-merged_res-36:/layout_activity_main.xml.flat",
+        "source": "com.fanqie.auto.app-main-38:/layout/activity_main.xml"
+    }
+]
