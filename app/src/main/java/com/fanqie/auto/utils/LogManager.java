@@ -247,4 +247,70 @@ public class LogManager {
             lock.readLock().unlock();
         }
     }
+    
+    public static boolean exportLogsToFile(File file) {
+        lock.readLock().lock();
+        try {
+            try (FileWriter writer = new FileWriter(file)) {
+                for (LogEntry entry : logBuffer) {
+                    writer.write(entry.toString());
+                    writer.write("\n");
+                }
+                return true;
+            } catch (IOException e) {
+                LogManager.e("导出日志失败", e);
+                return false;
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+    
+    public static boolean exportLogsToFile(File file, String level, String keyword) {
+        lock.readLock().lock();
+        try {
+            try (FileWriter writer = new FileWriter(file)) {
+                for (LogEntry entry : logBuffer) {
+                    if (entry.matchesFilter(level, null, keyword)) {
+                        writer.write(entry.toString());
+                        writer.write("\n");
+                    }
+                }
+                return true;
+            } catch (IOException e) {
+                LogManager.e("导出日志失败", e);
+                return false;
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+    
+    public static String exportLogsToString() {
+        lock.readLock().lock();
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (LogEntry entry : logBuffer) {
+                sb.append(entry.toString()).append("\n");
+            }
+            return sb.toString();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+    
+    public static String exportLogsToString(String level, String keyword) {
+        lock.readLock().lock();
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (LogEntry entry : logBuffer) {
+                if (entry.matchesFilter(level, null, keyword)) {
+                    sb.append(entry.toString()).append("\n");
+                }
+            }
+            return sb.toString();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
 }
