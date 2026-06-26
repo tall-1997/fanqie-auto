@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>番茄小说自动签到模块 v6.0.0 - 下载</title>
+    <title>番茄小说自动签到模块 v7.0.0 - 下载</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,16 +24,16 @@
             padding: 40px;
         }
         .header { text-align: center; margin-bottom: 30px; }
-        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #9b59b6, #3498db); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #e94560, #0f3460); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
         h1 { color: #333; margin-bottom: 8px; font-size: 28px; }
         .version { color: #666; font-size: 16px; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-left: 8px; }
-        .badge-new { background: #9b59b6; color: white; }
-        .badge-deep { background: #e74c3c; color: white; }
+        .badge-new { background: #e94560; color: white; }
+        .badge-auto { background: #27ae60; color: white; }
         .features { background: #f8f9fa; border-radius: 12px; padding: 24px; margin: 24px 0; }
         .features h3 { color: #333; margin-bottom: 16px; font-size: 18px; }
         .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .feature-item { display: flex; align-items: center; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #9b59b6; }
+        .feature-item { display: flex; align-items: center; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #e94560; }
         .feature-item .icon { font-size: 24px; margin-right: 12px; }
         .feature-item .text { flex: 1; }
         .feature-item .text h4 { color: #333; font-size: 14px; margin-bottom: 4px; }
@@ -41,7 +41,7 @@
         .download-section { text-align: center; margin: 30px 0; }
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            background: linear-gradient(135deg, #e94560, #c0392b);
             color: white;
             padding: 18px 50px;
             border-radius: 30px;
@@ -49,104 +49,90 @@
             font-size: 20px;
             font-weight: bold;
             transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.4);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
         }
-        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(155, 89, 182, 0.5); }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(233, 69, 96, 0.5); }
         .download-info { margin-top: 12px; color: #999; font-size: 14px; }
-        .info-card { background: #f3e5f5; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .info-card h4 { color: #7b1fa2; margin-bottom: 12px; }
+        .info-card { background: #e8f5e9; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .info-card h4 { color: #2e7d32; margin-bottom: 12px; }
         .info-card ul { list-style: none; padding: 0; }
         .info-card li { padding: 8px 0; color: #555; display: flex; align-items: flex-start; }
-        .info-card li::before { content: "✓"; color: #9b59b6; font-weight: bold; margin-right: 8px; }
+        .info-card li::before { content: "✓"; color: #4caf50; font-weight: bold; margin-right: 8px; }
         .warning-card { background: #fff3cd; border-radius: 12px; padding: 20px; margin: 20px 0; }
         .warning-card h4 { color: #856404; margin-bottom: 12px; }
         .warning-card p { color: #555; margin-bottom: 8px; }
         .log-card { background: #263238; border-radius: 12px; padding: 20px; margin: 20px 0; }
         .log-card h4 { color: #4fc3f7; margin-bottom: 12px; }
         .log-card code { display: block; background: #1a237e; color: #64ffda; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 13px; overflow-x: auto; white-space: pre-wrap; }
-        .changelog { background: #e8eaf6; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .changelog h3 { color: #283593; margin-bottom: 16px; }
+        .changelog { background: #e3f2fd; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .changelog h3 { color: #1565c0; margin-bottom: 16px; }
         .changelog ul { list-style: disc; padding-left: 20px; }
         .changelog li { padding: 6px 0; color: #555; }
-        .method-list { background: #e0f2f1; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .method-list h4 { color: #00695c; margin-bottom: 12px; }
-        .method-list code { display: block; background: #b2dfdb; padding: 8px; border-radius: 4px; margin: 4px 0; font-family: monospace; font-size: 12px; }
         footer { text-align: center; margin-top: 40px; color: #999; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🔍</div>
+            <div class="logo">🤖</div>
             <h1>番茄小说自动签到模块</h1>
             <div class="version">
-                v6.0.0
+                v7.0.0
                 <span class="badge badge-new">NEW</span>
-                <span class="badge badge-deep">深度Hook</span>
+                <span class="badge badge-auto">自动执行</span>
             </div>
         </div>
         
         <div class="features">
-            <h3>深度Hook功能</h3>
+            <h3>v7.0.0 核心功能</h3>
             <div class="feature-grid">
                 <div class="feature-item">
                     <div class="icon">🔍</div>
                     <div class="text">
-                        <h4>深度扫描</h4>
-                        <p>扫描所有签到/任务/奖励类</p>
+                        <h4>深度Hook</h4>
+                        <p>Hook所有签到/任务类</p>
                     </div>
                 </div>
                 <div class="feature-item">
-                    <div class="icon">🪝</div>
+                    <div class="icon">⚡</div>
                     <div class="text">
-                        <h4>方法Hook</h4>
-                        <p>Hook所有相关方法</p>
+                        <h4>自动执行</h4>
+                        <p>每30秒自动尝试签到</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📋</div>
+                    <div class="text">
+                        <h4>自动任务</h4>
+                        <p>每60秒自动完成任务</p>
                     </div>
                 </div>
                 <div class="feature-item">
                     <div class="icon">📊</div>
                     <div class="text">
-                        <h4>参数记录</h4>
-                        <p>记录所有方法参数和返回值</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="icon">🔄</div>
-                    <div class="text">
-                        <h4>定时调用</h4>
-                        <p>每60秒尝试调用签到方法</p>
+                        <h4>状态监控</h4>
+                        <p>实时显示运行状态</p>
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="download-section">
-            <a href="FanqieAuto-v6.0.0.apk" class="download-btn">
-                📥 下载 v6.0.0 (29KB)
+            <a href="FanqieAuto-v7.0.0.apk" class="download-btn">
+                📥 下载 v7.0.0 (31KB)
             </a>
-            <div class="download-info">深度Hook模式 · 自动尝试签到</div>
+            <div class="download-info">深度Hook + 自动执行</div>
         </div>
         
         <div class="info-card">
-            <h4>✅ v6.0.0 深度Hook功能</h4>
+            <h4>✅ v7.0.0 改进</h4>
             <ul>
-                <li><strong>深度扫描</strong> - 扫描所有签到/任务/奖励相关类</li>
-                <li><strong>方法Hook</strong> - Hook所有相关方法并记录调用</li>
-                <li><strong>参数记录</strong> - 记录所有方法参数和返回值</li>
-                <li><strong>定时调用</strong> - 每60秒尝试调用签到方法</li>
-                <li><strong>状态输出</strong> - 定期输出已找到的方法数量</li>
+                <li><strong>统一版本号</strong> - build.gradle、AndroidManifest、界面显示统一为7.0.0</li>
+                <li><strong>自动签到</strong> - 每30秒自动尝试调用签到方法</li>
+                <li><strong>自动任务</strong> - 每60秒自动尝试调用任务方法</li>
+                <li><strong>状态输出</strong> - 每10秒输出签到/任务统计</li>
+                <li><strong>多种调用方式</strong> - 直接调用 + 反射调用</li>
             </ul>
-        </div>
-        
-        <div class="method-list">
-            <h4>🔍 扫描的类</h4>
-            <code>GoldCoinRepo - 金币签到</code>
-            <code>LongSignInKlayViewModel - 长期签到</code>
-            <code>NewUserSevenDaySignInViewModel - 新用户签到</code>
-            <code>AlarmClockRepository - 闹钟签到</code>
-            <code>TaskDoneDataRepository - 任务完成</code>
-            <code>TreasureTaskDoneDataRepository - 宝箱任务</code>
-            <code>SecondFloorDivideGoldCoinViewModel - 金币任务</code>
         </div>
         
         <div class="warning-card">
@@ -155,7 +141,7 @@
             <p>2. 在 LSPosed 中启用模块</p>
             <p>3. 设置作用域为「番茄免费小说」</p>
             <p>4. 重启番茄小说应用</p>
-            <p>5. 查看日志了解Hook情况</p>
+            <p>5. 打开番茄小说，模块会自动运行</p>
         </div>
         
         <div class="log-card">
@@ -163,21 +149,20 @@
             <code>adb logcat -s Xposed:* FanqieAuto:*
 
 # 日志会显示：
-# [FanqieAuto] 已找到 X 个相关方法
-# [FanqieAuto] [=== 方法调用 ===]
-# [FanqieAuto] 类: xxx
-# [FanqieAuto] 方法: xxx
-# [FanqieAuto] 参数: xxx
-# [FanqieAuto] 返回: xxx</code>
+# [FanqieAuto] 已Hook签到类: GoldCoinRepo
+# [FanqieAuto] 获取GoldCoinRepo实例成功
+# [FanqieAuto] 尝试自动签到...
+# [FanqieAuto] 调用签到方法成功
+# [FanqieAuto] 签到成功!</code>
         </div>
         
         <div class="changelog">
             <h3>更新日志</h3>
             <ul>
-                <li><strong>v6.0.0</strong> - 深度Hook模式，扫描所有相关类和方法</li>
+                <li><strong>v7.0.0</strong> - 统一版本号，深度Hook + 自动执行</li>
+                <li><strong>v6.0.0</strong> - 深度Hook模式</li>
                 <li><strong>v5.0.0</strong> - 简化为监控模式</li>
-                <li><strong>v4.0.0</strong> - 尝试自动执行（反射调用失败）</li>
-                <li><strong>v3.1.0</strong> - 修复闪退</li>
+                <li><strong>v4.0.0</strong> - 尝试自动执行</li>
                 <li><strong>v1.0.0</strong> - 初始版本</li>
             </ul>
         </div>
