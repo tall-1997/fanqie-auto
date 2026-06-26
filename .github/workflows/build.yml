@@ -1,4 +1,4 @@
-name: Build Module
+name: Build APK
 
 on:
   push:
@@ -18,8 +18,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Create Xposed stubs
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Build APK
       run: |
+        # 创建 Xposed stubs
         mkdir -p stubs/de/robv/android/xposed
         
         cat > stubs/de/robv/android/xposed/IXposedHookLoadPackage.java << 'JAVA'
@@ -73,35 +77,69 @@ jobs:
             public static Object callMethod(Object obj, String method, Object... args) { return null; }
         }
         JAVA
-    
-    - name: Compile stubs
-      run: |
+        
+        # 编译 stubs
         mkdir -p build/classes
         javac -d build/classes stubs/de/robv/android/xposed/*.java
-    
-    - name: Compile module
-      run: |
-        javac -cp build/classes -d build/classes \
-          app/src/main/java/com/fanqie/auto/MainHook.java
-    
-    - name: Create JAR
-      run: |
+        
+        # 编译模块
+        javac -cp build/classes -d build/classes app/src/main/java/com/fanqie/auto/MainHook.java
+        
+        # 创建 JAR
         cd build/classes
         jar cf ../../fanqie-auto.jar com/
         cd ../..
         
-        # 创建 xposed_init
-        mkdir -p assets
-        echo "com.fanqie.auto.MainHook" > assets/xposed_init
+        # 创建 DEX
+        d8 --output build/dex fanqie-auto.jar
+        mv build/dex/classes.dex build/classes.dex
         
-        # 创建文件列表
-        echo "fanqie-auto.jar" > file_list.txt
-        echo "assets/xposed_init" >> file_list.txt
+        # 创建资源
+        mkdir -p build/res/values build/res/drawable build/assets
+        
+        cat > build/res/values/strings.xml << 'XML'
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="app_name">FanqieAuto</string>
+        </resources>
+        XML
+        
+        cat > build/res/drawable/icon.xml << 'XML'
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="108dp" android:height="108dp"
+            android:viewportWidth="108" android:viewportHeight="108">
+            <path android:fillColor="#E94560" android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0"/>
+            <path android:fillColor="#FFFFFF" android:pathData="M40,40L40,68L68,54Z"/>
+        </vector>
+        XML
+        
+        cat > build/AndroidManifest.xml << 'XML'
+        <?xml version="1.0" encoding="utf-8"?>
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+            package="com.fanqie.auto">
+            <application android:label="FanqieAuto" android:icon="@drawable/icon">
+                <meta-data android:name="xposedmodule" android:value="true"/>
+                <meta-data android:name="xposeddescription" android:value="番茄小说自动签到模块 v0.0.1"/>
+                <meta-data android:name="xposedminversion" android:value="82"/>
+                <meta-data android:name="xposedscope" android:value="com.dragon.read"/>
+            </application>
+        </manifest>
+        XML
+        
+        echo "com.fanqie.auto.MainHook" > build/assets/xposed_init
+        
+        # 打包 APK
+        cd build
+        aapt package -f -M AndroidManifest.xml -S res -I $ANDROID_HOME/platforms/android-34/android.jar -F fanqie-auto-unsigned.apk
+        zip -j fanqie-auto-unsigned.apk classes.dex assets/xposed_init
+        cd ..
+        
+        # 签名
+        keytool -genkey -v -keystore build/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Debug,O=Android,C=US"
+        apksigner sign --ks build/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android --out output/fanqie-auto.apk build/fanqie-auto-unsigned.apk
     
-    - name: Upload artifacts
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: fanqie-auto-module
-        path: |
-          fanqie-auto.jar
-          assets/xposed_init
+        name: fanqie-auto
+        path: output/fanqie-auto.apk
