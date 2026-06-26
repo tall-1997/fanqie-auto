@@ -10,6 +10,9 @@ import com.fanqie.auto.model.SignRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 签到Hook - 自动签到和签到结果处理
@@ -21,6 +24,9 @@ public class SignHook extends BaseHook {
     private long totalReward = 0;
     private int successCount = 0;
     private int failCount = 0;
+    private int retryCount = 0;
+    private static final int MAX_RETRY_COUNT = 3;
+    private ScheduledExecutorService retryExecutor;
     
     public SignHook(Config config) {
         super(HOOK_NAME);
@@ -70,17 +76,42 @@ public class SignHook extends BaseHook {
         // 例如：检测到签到页面时自动点击签到按钮
         // 由于需要具体的UI交互，这里先记录日志
         LogManager.d("自动签到Hook初始化（待实现）");
+        
+        // 初始化重试执行器
+        retryExecutor = Executors.newSingleThreadScheduledExecutor();
+    }
+    
+    private void retrySign() {
+        if (retryCount < MAX_RETRY_COUNT) {
+            retryCount++;
+            LogManager.i("签到重试，第" + retryCount + "次");
+            
+            // 延迟重试
+            retryExecutor.schedule(() -> {
+                // 这里应该调用实际的签到方法
+                // 例如：sendSignRequest();
+            }, 5, TimeUnit.SECONDS);
+        } else {
+            LogManager.i("签到重试次数已达上限");
+            retryCount = 0;
+        }
     }
     
     private void handleSignStatus(int status) {
         if (status == 1) {
             LogManager.i("签到成功!");
             successCount++;
+            retryCount = 0; // 重置重试计数
             addSignRecord(true, 0, "签到成功");
         } else if (status == 0) {
             LogManager.i("签到失败或已签到");
             failCount++;
             addSignRecord(false, 0, "签到失败或已签到");
+            
+            // 如果失败，尝试重试
+            if (config.isAutoSignEnabled()) {
+                retrySign();
+            }
         }
     }
     
@@ -110,6 +141,18 @@ public class SignHook extends BaseHook {
         }
     }
     
+    private void sendSignRequest() {
+        // 这里应该实现实际的签到请求构造
+        // 例如：构造HTTP请求并发送
+        LogManager.d("发送签到请求");
+        
+        // 示例：构造签到请求
+        // 1. 获取签到URL
+        // 2. 构造请求参数
+        // 3. 发送HTTP请求
+        // 4. 处理响应
+    }
+    
     public List<SignRecord> getSignRecords() {
         return new ArrayList<>(signRecords);
     }
@@ -137,6 +180,14 @@ public class SignHook extends BaseHook {
         totalReward = 0;
         successCount = 0;
         failCount = 0;
+    }
+    
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (retryExecutor != null) {
+            retryExecutor.shutdown();
+        }
     }
     
     @Override
