@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         
         // 版本
         TextView version = new TextView(this);
-        version.setText("v16.0.0 | 深度分析版");
+        version.setText("v17.0.0 | 修复版");
         version.setTextSize(14);
         version.setTextColor(Color.parseColor("#4CAF50"));
         version.setGravity(Gravity.CENTER);

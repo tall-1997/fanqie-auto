@@ -18,14 +18,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 番茄小说自动签到模块 v16.0.0
- * 深度分析版 - 使用正确的API服务器和token
+ * 番茄小说自动签到模块 v17.0.0
+ * 修复版 - 改进token捕获和自动签到
  */
 public class MainHook implements IXposedHookLoadPackage {
 
     private static final String TAG = "[FanqieAuto] ";
     private static final String TARGET_PACKAGE = "com.dragon.read";
-    private static final String MODULE_VERSION = "v16.0.0";
+    private static final String MODULE_VERSION = "v17.0.0";
 
     // 正确的API服务器
     private static final String API_SERVER = "https://api5-normal-sinfonlinea.fqnovel.com";
@@ -44,11 +44,11 @@ public class MainHook implements IXposedHookLoadPackage {
     private AtomicBoolean isProcessing = new AtomicBoolean(false);
     private int signCount = 0;
     private int successCount = 0;
+    private int requestCount = 0;
     
     // 捕获的认证信息
     private String capturedToken = null;
-    private String capturedSessionToken = null;
-    private String capturedAccessToken = null;
+    private String capturedCookie = null;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -56,17 +56,14 @@ public class MainHook implements IXposedHookLoadPackage {
 
         XposedBridge.log(TAG + "==============================");
         XposedBridge.log(TAG + "番茄小说自动签到模块 " + MODULE_VERSION);
-        XposedBridge.log(TAG + "深度分析版");
+        XposedBridge.log(TAG + "修复版 - 改进token捕获");
         XposedBridge.log(TAG + "==============================");
 
         appClassLoader = lpparam.classLoader;
 
         try {
-            // Hook SharedPreferences获取token
-            hookSharedPreferences(lpparam.classLoader);
-            
-            // Hook HTTP请求捕获token
-            hookHttpRequest(lpparam.classLoader);
+            // Hook OkHttp请求
+            hookOkHttp(lpparam.classLoader);
             
             // 启动定时任务
             startScheduler();
@@ -79,71 +76,11 @@ public class MainHook implements IXposedHookLoadPackage {
     }
 
     /**
-     * Hook SharedPreferences获取token
+     * Hook OkHttp请求
      */
-    private void hookSharedPreferences(ClassLoader classLoader) {
+    private void hookOkHttp(ClassLoader classLoader) {
         try {
-            // Hook SharedPreferences.getString
-            XposedHelpers.findAndHookMethod(
-                "android.app.Application",
-                classLoader,
-                "getSharedPreferences",
-                String.class,
-                int.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            Object prefs = param.getResult();
-                            if (prefs != null) {
-                                // Hook getString方法
-                                XposedHelpers.findAndHookMethod(
-                                    prefs.getClass(),
-                                    "getString",
-                                    String.class,
-                                    String.class,
-                                    new XC_MethodHook() {
-                                        @Override
-                                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                            String key = (String) param.args[0];
-                                            String value = (String) param.getResult();
-                                            
-                                            if (value != null && !value.isEmpty()) {
-                                                if ("token".equals(key) || "access_token".equals(key) || 
-                                                    "session_token".equals(key) || "auth_token".equals(key)) {
-                                                    XposedBridge.log(TAG + "从SharedPreferences获取: " + key + " = " + 
-                                                        value.substring(0, Math.min(30, value.length())) + "...");
-                                                    
-                                                    if ("token".equals(key) || "access_token".equals(key)) {
-                                                        capturedToken = value;
-                                                        capturedAccessToken = value;
-                                                    } else if ("session_token".equals(key)) {
-                                                        capturedSessionToken = value;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                );
-                            }
-                        } catch (Throwable e) {
-                            // 忽略
-                        }
-                    }
-                }
-            );
-            XposedBridge.log(TAG + "SharedPreferences Hook成功");
-        } catch (Throwable e) {
-            XposedBridge.log(TAG + "SharedPreferences Hook失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Hook HTTP请求捕获token
-     */
-    private void hookHttpRequest(ClassLoader classLoader) {
-        try {
-            // Hook OkHttp Request.Builder.build()
+            // Hook Request.Builder.build()
             XposedHelpers.findAndHookMethod(
                 "okhttp3.Request$Builder",
                 classLoader,
@@ -155,20 +92,26 @@ public class MainHook implements IXposedHookLoadPackage {
                             Object request = param.getResult();
                             String url = (String) XposedHelpers.getObjectField(request, "url");
                             
-                            if (url != null && isApiUrl(url)) {
+                            requestCount++;
+                            
+                            if (url != null) {
                                 // 获取请求头
-                                try {
-                                    Object headers = XposedHelpers.getObjectField(request, "headers");
-                                    if (headers != null) {
-                                        String headersStr = headers.toString();
-                                        
-                                        // 解析token
-                                        if (headersStr.contains("token") || headersStr.contains("Token")) {
-                                            parseAuthToken(headersStr);
-                                        }
+                                Object headers = XposedHelpers.getObjectField(request, "headers");
+                                String headersStr = headers != null ? headers.toString() : "";
+                                
+                                // 捕获token
+                                if (headersStr.contains("token") || headersStr.contains("Token")) {
+                                    parseHeaders(headersStr);
+                                }
+                                
+                                // 记录API请求
+                                if (url.contains("api.fqnovel.com") || url.contains("api5-normal")) {
+                                    XposedBridge.log(TAG + "API请求: " + url);
+                                    
+                                    // 如果是签到API，记录成功
+                                    if (url.contains("sign_in") || url.contains("signin")) {
+                                        XposedBridge.log(TAG + "检测到签到请求");
                                     }
-                                } catch (Throwable e) {
-                                    // 忽略
                                 }
                             }
                         } catch (Throwable e) {
@@ -178,26 +121,16 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
             
-            XposedBridge.log(TAG + "HTTP请求Hook成功");
+            XposedBridge.log(TAG + "OkHttp Hook成功");
         } catch (Throwable e) {
-            XposedBridge.log(TAG + "HTTP请求Hook失败: " + e.getMessage());
+            XposedBridge.log(TAG + "OkHttp Hook失败: " + e.getMessage());
         }
     }
 
     /**
-     * 判断是否为API URL
+     * 解析请求头
      */
-    private boolean isApiUrl(String url) {
-        String lower = url.toLowerCase();
-        return lower.contains("api5-normal-sinfonlinea.fqnovel.com") || 
-               lower.contains("api.fqnovel.com") ||
-               lower.contains("luckycat");
-    }
-
-    /**
-     * 解析认证token
-     */
-    private void parseAuthToken(String headers) {
+    private void parseHeaders(String headers) {
         try {
             String[] lines = headers.split("\n");
             for (String line : lines) {
@@ -206,10 +139,16 @@ public class MainHook implements IXposedHookLoadPackage {
                     String[] parts = line.split(":\\s*", 2);
                     if (parts.length > 1) {
                         String token = parts[1].trim();
-                        if (token.length() > 10 && !token.equals("null")) {
+                        if (token.length() > 10 && !token.equals("null") && !token.contains("{")) {
                             capturedToken = token;
-                            XposedBridge.log(TAG + "从HTTP头捕获Token: " + token.substring(0, Math.min(30, token.length())) + "...");
+                            XposedBridge.log(TAG + "捕获Token: " + token.substring(0, Math.min(30, token.length())) + "...");
                         }
+                    }
+                }
+                if (lower.contains("cookie")) {
+                    String[] parts = line.split(":\\s*", 2);
+                    if (parts.length > 1) {
+                        capturedCookie = parts[1].trim();
                     }
                 }
             }
@@ -227,11 +166,11 @@ public class MainHook implements IXposedHookLoadPackage {
         // 每60秒输出状态并尝试签到
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                XposedBridge.log(TAG + "状态: 签到=" + signCount + " 成功=" + successCount);
+                XposedBridge.log(TAG + "状态: 请求=" + requestCount + " 签到=" + signCount + " 成功=" + successCount);
                 XposedBridge.log(TAG + "Token: " + (capturedToken != null ? "已捕获" : "未捕获"));
                 
-                // 如果有token，尝试签到
-                if (capturedToken != null && !isProcessing.get()) {
+                // 尝试签到
+                if (!isProcessing.get()) {
                     isProcessing.set(true);
                     tryAutoSign();
                     isProcessing.set(false);
@@ -240,18 +179,13 @@ public class MainHook implements IXposedHookLoadPackage {
                 XposedBridge.log(TAG + "定时任务异常: " + e.getMessage());
                 isProcessing.set(false);
             }
-        }, 10, 60, TimeUnit.SECONDS);
+        }, 5, 60, TimeUnit.SECONDS);
     }
 
     /**
      * 尝试自动签到
      */
     private void tryAutoSign() {
-        if (capturedToken == null) {
-            XposedBridge.log(TAG + "未捕获到Token，跳过签到");
-            return;
-        }
-        
         XposedBridge.log(TAG + "尝试自动签到...");
         signCount++;
         
@@ -265,13 +199,13 @@ public class MainHook implements IXposedHookLoadPackage {
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/json");
                     conn.setRequestProperty("User-Agent", "okhttp/3.12.1");
-                    conn.setRequestProperty("token", capturedToken);
                     
-                    if (capturedAccessToken != null) {
-                        conn.setRequestProperty("access_token", capturedAccessToken);
+                    // 添加认证信息
+                    if (capturedToken != null) {
+                        conn.setRequestProperty("token", capturedToken);
                     }
-                    if (capturedSessionToken != null) {
-                        conn.setRequestProperty("session_token", capturedSessionToken);
+                    if (capturedCookie != null) {
+                        conn.setRequestProperty("Cookie", capturedCookie);
                     }
                     
                     conn.setDoOutput(true);
