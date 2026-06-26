@@ -66,10 +66,10 @@
 - [x] 创建主题样式文件
 
 ### 3.2 实现主Activity和Fragment
-- [ ] 创建MainActivity继承AppCompatActivity
-- [ ] 实现底部导航栏
-- [ ] 实现Fragment管理
-- [ ] 添加主题切换支持
+- [x] 创建MainActivity继承AppCompatActivity
+- [x] 实现底部导航栏
+- [x] 实现Fragment管理
+- [x] 添加主题切换支持
 
 ### 3.3 实现仪表盘Fragment
 - [ ] 创建DashboardFragment
