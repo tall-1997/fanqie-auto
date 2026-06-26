@@ -10,16 +10,30 @@ public abstract class BaseHook {
     protected final String name;
     protected boolean enabled;
     protected boolean initialized;
+    protected int priority; // 优先级，数值越小优先级越高
     protected XC_LoadPackage.LoadPackageParam lpparam;
     
     public BaseHook(String name) {
+        this(name, 100); // 默认优先级100
+    }
+    
+    public BaseHook(String name, int priority) {
         this.name = name;
+        this.priority = priority;
         this.enabled = true;
         this.initialized = false;
     }
     
     public String getName() {
         return name;
+    }
+    
+    public int getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
     
     public boolean isEnabled() {

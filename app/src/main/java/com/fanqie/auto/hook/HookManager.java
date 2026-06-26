@@ -1,8 +1,15 @@
 package com.fanqie.auto.hook;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.fanqie.auto.utils.LogManager;
 
@@ -12,6 +19,8 @@ import com.fanqie.auto.utils.LogManager;
 public class HookManager {
     private final List<BaseHook> hooks = new CopyOnWriteArrayList<>();
     private final List<HookExecutionListener> listeners = new CopyOnWriteArrayList<>();
+    private long hookTimeout = 5000; // 5秒超时
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
     
     public interface HookExecutionListener {
         void onHookExecuted(String hookName, boolean success, long executionTime);
@@ -36,10 +45,22 @@ public class HookManager {
         listeners.remove(listener);
     }
     
+    public void setHookTimeout(long timeout) {
+        this.hookTimeout = timeout;
+    }
+    
+    public long getHookTimeout() {
+        return hookTimeout;
+    }
+    
     public void initAllHooks(de.robv.android.xposed.XC_LoadPackage.LoadPackageParam lpparam) {
         LogManager.d("开始初始化所有Hook，总数: " + hooks.size());
         
-        for (BaseHook hook : hooks) {
+        // 按优先级排序
+        List<BaseHook> sortedHooks = new ArrayList<>(hooks);
+        Collections.sort(sortedHooks, Comparator.comparingInt(BaseHook::getPriority));
+        
+        for (BaseHook hook : sortedHooks) {
             initHook(hook, lpparam);
         }
         
@@ -50,10 +71,26 @@ public class HookManager {
         long startTime = System.currentTimeMillis();
         
         try {
-            hook.initHook(lpparam);
+            // 使用超时控制
+            Future<?> future = executor.submit(() -> {
+                try {
+                    hook.initHook(lpparam);
+                } catch (Throwable e) {
+                    throw new RuntimeException(e);
+                }
+            });
             
-            long executionTime = System.currentTimeMillis() - startTime;
-            notifyHookExecuted(hook.getName(), true, executionTime);
+            try {
+                future.get(hookTimeout, TimeUnit.MILLISECONDS);
+                long executionTime = System.currentTimeMillis() - startTime;
+                notifyHookExecuted(hook.getName(), true, executionTime);
+            } catch (TimeoutException e) {
+                future.cancel(true);
+                long executionTime = System.currentTimeMillis() - startTime;
+                LogManager.e("Hook初始化超时: " + hook.getName());
+                notifyHookError(hook.getName(), e);
+                notifyHookExecuted(hook.getName(), false, executionTime);
+            }
             
         } catch (Throwable e) {
             long executionTime = System.currentTimeMillis() - startTime;
@@ -99,6 +136,7 @@ public class HookManager {
             hook.destroy();
         }
         hooks.clear();
+        executor.shutdown();
         LogManager.d("所有Hook已销毁");
     }
     
