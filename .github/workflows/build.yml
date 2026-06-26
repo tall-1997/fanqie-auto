@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Module
 
 on:
   push:
@@ -17,18 +17,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    
-    - name: Install Android build tools
-      run: |
-        apt-get update
-        apt-get install -y aapt apksigner
-    
-    - name: Download Xposed API
-      run: |
-        mkdir -p lib
-        wget -q "https://github.com/nickchubb/xposed-api/raw/main/api-82.jar" -O lib/xposed-api.jar || \
-        wget -q "https://api.xposed.info/api-82.jar" -O lib/xposed-api.jar || \
-        echo "使用本地 stub"
     
     - name: Create Xposed stubs
       run: |
@@ -97,7 +85,7 @@ jobs:
           app/src/main/java/com/fanqie/auto/MainHook.java \
           app/src/main/java/com/fanqie/auto/MainActivity.java
     
-    - name: Create JAR and DEX
+    - name: Create JAR
       run: |
         cd build/classes
         jar cf ../../fanqie-auto.jar com/
@@ -106,11 +94,15 @@ jobs:
         # 创建 xposed_init
         mkdir -p assets
         echo "com.fanqie.auto.MainHook" > assets/xposed_init
+        
+        # 创建文件列表
+        echo "fanqie-auto.jar" > file_list.txt
+        echo "assets/xposed_init" >> file_list.txt
     
-    - name: Upload JAR
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: fanqie-auto
+        name: fanqie-auto-module
         path: |
           fanqie-auto.jar
           assets/xposed_init
