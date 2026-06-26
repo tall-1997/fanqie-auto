@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>番茄小说自动签到模块 v15.0.0 - 下载</title>
+    <title>番茄小说自动签到模块 v16.0.0 - 深度分析版</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -24,16 +24,16 @@
             padding: 40px;
         }
         .header { text-align: center; margin-bottom: 30px; }
-        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #27ae60, #2ecc71); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .logo { width: 100px; height: 100px; background: linear-gradient(135deg, #e74c3c, #c0392b); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
         h1 { color: #333; margin-bottom: 8px; font-size: 28px; }
         .version { color: #666; font-size: 16px; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-left: 8px; }
-        .badge-new { background: #27ae60; color: white; }
-        .badge-token { background: #9b59b6; color: white; }
+        .badge-new { background: #e74c3c; color: white; }
+        .badge-deep { background: #9b59b6; color: white; }
         .features { background: #f8f9fa; border-radius: 12px; padding: 24px; margin: 24px 0; }
         .features h3 { color: #333; margin-bottom: 16px; font-size: 18px; }
         .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .feature-item { display: flex; align-items: center; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #27ae60; }
+        .feature-item { display: flex; align-items: center; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #e74c3c; }
         .feature-item .icon { font-size: 24px; margin-right: 12px; }
         .feature-item .text { flex: 1; }
         .feature-item .text h4 { color: #333; font-size: 14px; margin-bottom: 4px; }
@@ -41,7 +41,7 @@
         .download-section { text-align: center; margin: 30px 0; }
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
             padding: 18px 50px;
             border-radius: 30px;
@@ -49,9 +49,9 @@
             font-size: 20px;
             font-weight: bold;
             transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4);
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
         }
-        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(39, 174, 96, 0.5); }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
         .download-info { margin-top: 12px; color: #999; font-size: 14px; }
         .info-card { background: #e8f5e9; border-radius: 12px; padding: 20px; margin: 20px 0; }
         .info-card h4 { color: #2e7d32; margin-bottom: 12px; }
@@ -61,39 +61,46 @@
         .warning-card { background: #fff3cd; border-radius: 12px; padding: 20px; margin: 20px 0; }
         .warning-card h4 { color: #856404; margin-bottom: 12px; }
         .warning-card p { color: #555; margin-bottom: 8px; }
-        .log-card { background: #263238; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .log-card h4 { color: #4fc3f7; margin-bottom: 12px; }
-        .log-card code { display: block; background: #1a237e; color: #64ffda; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 13px; overflow-x: auto; white-space: pre-wrap; }
+        .api-card { background: #e3f2fd; border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .api-card h4 { color: #1565c0; margin-bottom: 12px; }
+        .api-card code { display: block; background: #bbdefb; padding: 8px; border-radius: 4px; margin: 4px 0; font-family: monospace; font-size: 12px; }
         footer { text-align: center; margin-top: 40px; color: #999; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🔑</div>
+            <div class="logo">🔍</div>
             <h1>番茄小说自动签到模块</h1>
             <div class="version">
-                v15.0.0
+                v16.0.0
                 <span class="badge badge-new">NEW</span>
-                <span class="badge badge-token">自动Token</span>
+                <span class="badge badge-deep">深度分析</span>
             </div>
         </div>
         
         <div class="features">
-            <h3>v15.0.0 核心功能</h3>
+            <h3>v16.0.0 深度分析版</h3>
             <div class="feature-grid">
                 <div class="feature-item">
-                    <div class="icon">🔑</div>
+                    <div class="icon">🔍</div>
                     <div class="text">
-                        <h4>自动捕获Token</h4>
-                        <p>自动捕获认证信息</p>
+                        <h4>深度分析</h4>
+                        <p>分析APK所有API端点</p>
                     </div>
                 </div>
                 <div class="feature-item">
                     <div class="icon">🌐</div>
                     <div class="text">
-                        <h4>API调用</h4>
-                        <p>携带Token调用签到API</p>
+                        <h4>正确API</h4>
+                        <p>使用正确的API服务器</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🔑</div>
+                    <div class="text">
+                        <h4>Token捕获</h4>
+                        <p>自动捕获认证信息</p>
                     </div>
                 </div>
                 <div class="feature-item">
@@ -103,30 +110,34 @@
                         <p>每60秒自动签到</p>
                     </div>
                 </div>
-                <div class="feature-item">
-                    <div class="icon">📊</div>
-                    <div class="text">
-                        <h4>状态监控</h4>
-                        <p>实时显示签到状态</p>
-                    </div>
-                </div>
             </div>
         </div>
         
         <div class="download-section">
-            <a href="FanqieAuto-v15.0.0.apk" class="download-btn">
-                📥 下载 v15.0.0 (30KB)
+            <a href="FanqieAuto-v16.0.0.apk" class="download-btn">
+                📥 下载 v16.0.0 (31KB)
             </a>
-            <div class="download-info">自动捕获Token模式 · 签到成功率更高</div>
+            <div class="download-info">深度分析版 · 使用正确API</div>
+        </div>
+        
+        <div class="api-card">
+            <h4>🔍 深度分析结果</h4>
+            <p>通过分析番茄小说APK，找到以下签到API：</p>
+            <code>POST api5-normal-sinfonlinea.fqnovel.com/luckycat/novel/v1/task/done/sign_in</code>
+            <code>POST api5-normal-sinfonlinea.fqnovel.com/luckycat/novel/v1/task/done/bookshelf_sign_in</code>
+            <code>POST api5-normal-sinfonlinea.fqnovel.com/luckycat/novel/v1/task/done/meal</code>
+            <code>POST api5-normal-sinfonlinea.fqnovel.com/luckycat/novel/v1/task/done/daily_1min_earn_money</code>
+            <code>POST api5-normal-sinfonlinea.fqnovel.com/luckycat/novel/v1/task/done/daily_short_video_collect</code>
+            <code>POST api5-normal-sinfonlinea.fqnovel.com/luckycat/novel/v1/task/done/mix_task_collect</code>
         </div>
         
         <div class="info-card">
-            <h4>✅ v15.0.0 工作原理</h4>
+            <h4>✅ v16.0.0 改进</h4>
             <ul>
-                <li><strong>自动捕获</strong> - 监控HTTP请求，自动捕获认证Token</li>
-                <li><strong>携带Token</strong> - 使用捕获的Token调用签到API</li>
-                <li><strong>定时执行</strong> - 每60秒自动执行签到</li>
-                <li><strong>状态监控</strong> - 实时显示签到状态和Token状态</li>
+                <li><strong>正确API服务器</strong> - 使用 api5-normal-sinfonlinea.fqnovel.com</li>
+                <li><strong>多端点尝试</strong> - 尝试多个签到API端点</li>
+                <li><strong>Token捕获</strong> - 从SharedPreferences和HTTP请求捕获token</li>
+                <li><strong>请求头完善</strong> - 添加token、access_token、session_token</li>
             </ul>
         </div>
         
@@ -138,24 +149,6 @@
             <p>4. 重启番茄小说应用</p>
             <p>5. <strong>手动打开番茄小说一次</strong>，让模块捕获认证Token</p>
             <p>6. 之后模块会自动签到</p>
-        </div>
-        
-        <div class="log-card">
-            <h4>📊 查看日志</h4>
-            <code>adb logcat -s Xposed:* FanqieAuto:*
-
-# 日志会显示：
-# [FanqieAuto] ==============================
-# [FanqieAuto] 番茄小说自动签到模块 v15.0.0
-# [FanqieAuto] 自动捕获Token模式
-# [FanqieAuto] ==============================
-# [FanqieAuto] HTTP请求Hook成功
-# [FanqieAuto] 捕获Token: eyJhbGciOiJIUzI1NiIs...
-# [FanqieAuto] 状态: 签到=0 成功=0
-# [FanqieAuto] Token: 已捕获
-# [FanqieAuto] 尝试自动签到...
-# [FanqieAuto] 签到响应码: 200
-# [FanqieAuto] 签到成功!</code>
         </div>
         
         <footer>
