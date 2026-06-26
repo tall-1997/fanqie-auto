@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         
         // 版本
         TextView version = new TextView(this);
-        version.setText("v17.0.0 | 修复版");
+        version.setText("v18.0.0 | LuckyDog SDK Token模式");
         version.setTextSize(14);
         version.setTextColor(Color.parseColor("#4CAF50"));
         version.setGravity(Gravity.CENTER);
