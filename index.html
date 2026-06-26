@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>番茄小说自动签到模块 - 下载</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            border-radius: 25px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .version {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .features {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .features h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .features ul {
+            list-style: none;
+        }
+        .features li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+        .features li::before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .download-btn.secondary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 10px;
+            color: #856404;
+        }
+        .info h4 {
+            margin-bottom: 10px;
+        }
+        .tech-details {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .tech-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .tech-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .tech-details td, .tech-details th {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+        .tech-details th {
+            color: #666;
+            font-weight: normal;
+        }
+        .tech-details td {
+            color: #333;
+            font-weight: bold;
+        }
+        footer {
+            margin-top: 40px;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📱</div>
+        <h1>番茄小说自动签到模块</h1>
+        <p class="version">v1.0.0 · 基于 libxposed API 101</p>
+        
+        <div class="features">
+            <h3>功能特性</h3>
+            <ul>
+                <li>自动监控签到接口</li>
+                <li>自动监控任务接口</li>
+                <li>智能识别金币奖励</li>
+                <li>HTTP请求日志记录</li>
+                <li>签到结果实时通知</li>
+                <li>支持多种签到方式</li>
+            </ul>
+        </div>
+        
+        <div>
+            <a href="https://github.com/zhaoxuya520/fanqie-auto-sign" class="download-btn">
+                📥 下载源代码
+            </a>
+            <a href="https://github.com/libxposed/api" class="download-btn secondary">
+                📚 libxposed API
+            </a>
+        </div>
+        
+        <div class="info">
+            <h4>⚠️ 使用说明</h4>
+            <p>本模块需要 LSPosed 框架支持，请确保已正确安装 LSPosed。</p>
+            <p>使用前请在 LSPosed 中启用模块并设置作用域为「番茄免费小说」。</p>
+        </div>
+        
+        <div class="tech-details">
+            <h3>技术细节</h3>
+            <table>
+                <tr>
+                    <th>目标应用</th>
+                    <td>com.dragon.read (番茄小说)</td>
+                </tr>
+                <tr>
+                    <th>Xposed API</th>
+                    <td>libxposed API 101</td>
+                </tr>
+                <tr>
+                    <th>最低Android版本</th>
+                    <td>Android 8.0 (API 26)</td>
+                </tr>
+                <tr>
+                    <th>Hook点</th>
+                    <td>OkHttp3 Request Builder</td>
+                </tr>
+                <tr>
+                    <th>监控字段</th>
+                    <td>status, coin, gold, reward, obtain</td>
+                </tr>
+            </table>
+        </div>
+        
+        <footer>
+            <p>开源项目 · 仅供学习研究使用</p>
+            <p>基于 Apache License 2.0 许可证</p>
+        </footer>
+    </div>
+</body>
+</html>
