@@ -119,10 +119,10 @@
 ## Phase 5: 测试和优化
 
 ### 5.1 编写单元测试
-- [ ] 编写ConfigManager单元测试
-- [ ] 编写LogManager单元测试
-- [ ] 编写HookManager单元测试
-- [ ] 编写工具类单元测试
+- [x] 编写ConfigManager单元测试
+- [x] 编写LogManager单元测试
+- [x] 编写HookManager单元测试
+- [x] 编写工具类单元测试
 
 ### 5.2 进行集成测试
 - [ ] 测试模块初始化流程
