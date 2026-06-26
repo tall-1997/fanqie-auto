@@ -1,8 +1,8 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.fanqie.auto"
-4    android:versionCode="1"
-5    android:versionName="1.0.0" >
+4    android:versionCode="3"
+5    android:versionName="1.0.2" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="26"
@@ -55,7 +55,7 @@
 34            </intent-filter>
 35        </activity>
 36
-37        <!-- libxposed API 元数据 -->
+37        <!-- libxposed API 102 元数据 -->
 38        <meta-data
 38-->/workspace/app/src/main/AndroidManifest.xml:22:9-24:36
 39            android:name="xposedmodule"
@@ -63,22 +63,22 @@
 40            android:value="true" />
 40-->/workspace/app/src/main/AndroidManifest.xml:24:13-33
 41        <meta-data
-41-->/workspace/app/src/main/AndroidManifest.xml:25:9-27:71
+41-->/workspace/app/src/main/AndroidManifest.xml:25:9-27:69
 42            android:name="xposeddescription"
 42-->/workspace/app/src/main/AndroidManifest.xml:26:13-45
-43            android:value="番茄小说自动签到模块 v1.0.0 - 基于libxposed API 101" />
-43-->/workspace/app/src/main/AndroidManifest.xml:27:13-68
+43            android:value="番茄小说自动签到模块 v1.0.2 - libxposed API 102" />
+43-->/workspace/app/src/main/AndroidManifest.xml:27:13-66
 44        <meta-data
 44-->/workspace/app/src/main/AndroidManifest.xml:28:9-30:35
 45            android:name="xposedminversion"
 45-->/workspace/app/src/main/AndroidManifest.xml:29:13-44
-46            android:value="101" />
+46            android:value="102" />
 46-->/workspace/app/src/main/AndroidManifest.xml:30:13-32
 47        <meta-data
 47-->/workspace/app/src/main/AndroidManifest.xml:31:9-33:35
 48            android:name="xposedapiversion"
 48-->/workspace/app/src/main/AndroidManifest.xml:32:13-44
-49            android:value="101" />
+49            android:value="102" />
 49-->/workspace/app/src/main/AndroidManifest.xml:33:13-32
 50
 51        <provider

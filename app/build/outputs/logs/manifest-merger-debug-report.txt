@@ -120,9 +120,9 @@ ADDED from /workspace/app/src/main/AndroidManifest.xml:22:9-24:36
 	android:name
 		ADDED from /workspace/app/src/main/AndroidManifest.xml:23:13-40
 meta-data#xposeddescription
-ADDED from /workspace/app/src/main/AndroidManifest.xml:25:9-27:71
+ADDED from /workspace/app/src/main/AndroidManifest.xml:25:9-27:69
 	android:value
-		ADDED from /workspace/app/src/main/AndroidManifest.xml:27:13-68
+		ADDED from /workspace/app/src/main/AndroidManifest.xml:27:13-66
 	android:name
 		ADDED from /workspace/app/src/main/AndroidManifest.xml:26:13-45
 meta-data#xposedminversion

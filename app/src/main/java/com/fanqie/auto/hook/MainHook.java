@@ -5,17 +5,16 @@ import java.lang.reflect.Method;
 import androidx.annotation.NonNull;
 import io.github.libxposed.api.XposedModule;
 import io.github.libxposed.api.XposedModuleInterface;
-
 /**
  * 番茄小说自动签到模块 - 主入口
- * 版本: v1.0.0
- * 支持: libxposed API 101
+ * 版本: v1.0.2
+ * 支持: libxposed API 102
  */
 public class MainHook extends XposedModule implements XposedModuleInterface {
 
     private static final String TAG = "[FanqieAuto] ";
     private static final String TARGET_PACKAGE = "com.dragon.read";
-    private static final String MODULE_VERSION = "v1.0.0";
+    private static final String MODULE_VERSION = "v1.0.2";
 
     // 签到相关API路径
     private static final String[] SIGN_API_PATTERNS = {
@@ -66,9 +65,6 @@ public class MainHook extends XposedModule implements XposedModuleInterface {
             
             // Hook 签到响应
             hookSignResponse(classLoader);
-
-            // Hook 任务响应
-            hookTaskResponse(classLoader);
 
             log(TAG + "所有Hook初始化完成");
         } catch (Throwable e) {
@@ -160,18 +156,6 @@ public class MainHook extends XposedModule implements XposedModuleInterface {
     }
 
     /**
-     * Hook任务响应
-     */
-    private void hookTaskResponse(ClassLoader classLoader) {
-        try {
-            // 任务响应通常包含在JSON中，已被签到响应Hook覆盖
-            log(TAG + "任务响应Hook成功（使用签到响应Hook）");
-        } catch (Throwable e) {
-            log(TAG + "任务响应Hook失败: " + e.getMessage());
-        }
-    }
-
-    /**
      * 处理整数字段
      */
     private void handleIntField(String key, int value) {
@@ -204,6 +188,8 @@ public class MainHook extends XposedModule implements XposedModuleInterface {
      * 处理字符串字段
      */
     private void handleStringField(String key, String value) {
+        if (value == null || value.isEmpty()) return;
+        
         // 签到日期
         if ("todaySigned".equals(key) || "sign_date".equals(key)) {
             log(TAG + "签到日期: " + value);

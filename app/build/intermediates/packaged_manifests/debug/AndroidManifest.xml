@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fanqie.auto"
-    android:versionCode="1"
-    android:versionName="1.0.0" >
+    android:versionCode="3"
+    android:versionName="1.0.2" >
 
     <uses-sdk
         android:minSdkVersion="26"
@@ -34,19 +34,19 @@
             </intent-filter>
         </activity>
 
-        <!-- libxposed API 元数据 -->
+        <!-- libxposed API 102 元数据 -->
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="番茄小说自动签到模块 v1.0.0 - 基于libxposed API 101" />
+            android:value="番茄小说自动签到模块 v1.0.2 - libxposed API 102" />
         <meta-data
             android:name="xposedminversion"
-            android:value="101" />
+            android:value="102" />
         <meta-data
             android:name="xposedapiversion"
-            android:value="101" />
+            android:value="102" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

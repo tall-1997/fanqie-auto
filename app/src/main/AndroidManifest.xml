@@ -18,18 +18,18 @@
             </intent-filter>
         </activity>
 
-        <!-- libxposed API 元数据 -->
+        <!-- libxposed API 102 元数据 -->
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="番茄小说自动签到模块 v1.0.0 - 基于libxposed API 101" />
+            android:value="番茄小说自动签到模块 v1.0.2 - libxposed API 102" />
         <meta-data
             android:name="xposedminversion"
-            android:value="101" />
+            android:value="102" />
         <meta-data
             android:name="xposedapiversion"
-            android:value="101" />
+            android:value="102" />
     </application>
 </manifest>
