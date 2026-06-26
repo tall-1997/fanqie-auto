@@ -22,10 +22,10 @@
 - [x] 添加日志轮转机制
 
 ### 1.4 创建Hook基类和管理器
-- [ ] 创建BaseHook抽象类
-- [ ] 创建HookManager类
-- [ ] 实现Hook生命周期管理
-- [ ] 实现Hook执行链
+- [x] 创建BaseHook抽象类
+- [x] 创建HookManager类
+- [x] 实现Hook生命周期管理
+- [x] 实现Hook执行链
 
 ## Phase 2: Hook功能重构
 
