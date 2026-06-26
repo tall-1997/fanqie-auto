@@ -82,8 +82,7 @@ jobs:
     - name: Compile module
       run: |
         javac -cp build/classes -d build/classes \
-          app/src/main/java/com/fanqie/auto/MainHook.java \
-          app/src/main/java/com/fanqie/auto/MainActivity.java
+          app/src/main/java/com/fanqie/auto/MainHook.java
     
     - name: Create JAR
       run: |
