@@ -9,7 +9,7 @@
         android:theme="@android:style/Theme.Material.Light.DarkActionBar">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:label="番茄签到模块">
             <intent-filter>

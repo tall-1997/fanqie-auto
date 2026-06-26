@@ -1,4 +1,4 @@
-package com.fanqie.auto;
+package com.fanqie.auto.ui;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.fanqie.auto;
+package com.fanqie.auto.hook;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
