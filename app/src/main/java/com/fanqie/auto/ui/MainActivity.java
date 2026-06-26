@@ -18,28 +18,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 模块主界面 - 显示运行日志和任务详情
+ * 模块主界面
  */
 public class MainActivity extends Activity {
     
     private TextView tvStatus;
+    private TextView tvStats;
     private TextView tvLog;
     private ScrollView scrollView;
     private Handler handler;
     private List<String> logList = new ArrayList<>();
-    private static final int MAX_LOG_LINES = 100;
-    
-    // 统计数据
-    private int signCount = 0;
-    private int taskCount = 0;
-    private int rewardCount = 0;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new Handler(Looper.getMainLooper());
         
-        // 创建主布局
         LinearLayout mainLayout = new LinearLayout(this);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         mainLayout.setBackgroundColor(Color.parseColor("#1a1a2e"));
@@ -51,12 +45,12 @@ public class MainActivity extends Activity {
         title.setTextSize(24);
         title.setTextColor(Color.parseColor("#e94560"));
         title.setGravity(Gravity.CENTER);
-        title.setPadding(0, 0, 0, 16);
+        title.setPadding(0, 0, 0, 8);
         mainLayout.addView(title);
         
-        // 版本信息
+        // 版本
         TextView version = new TextView(this);
-        version.setText("v3.0.0 | 自动签到/领取/任务");
+        version.setText("v3.1.0 | 监控模式");
         version.setTextSize(14);
         version.setTextColor(Color.parseColor("#4CAF50"));
         version.setGravity(Gravity.CENTER);
@@ -65,55 +59,24 @@ public class MainActivity extends Activity {
         
         // 状态卡片
         LinearLayout statusCard = createCard();
-        
-        TextView statusTitle = new TextView(this);
-        statusTitle.setText("运行状态");
-        statusTitle.setTextSize(16);
-        statusTitle.setTextColor(Color.parseColor("#FFD700"));
-        statusTitle.setPadding(0, 0, 0, 12);
-        statusCard.addView(statusTitle);
-        
         tvStatus = new TextView(this);
-        tvStatus.setText("正在初始化...");
-        tvStatus.setTextSize(14);
+        tvStatus.setText("状态: 等待启动...");
+        tvStatus.setTextSize(16);
         tvStatus.setTextColor(Color.parseColor("#FFFFFF"));
-        tvStatus.setLineSpacing(8, 1);
         statusCard.addView(tvStatus);
-        
         mainLayout.addView(statusCard);
         
         // 统计卡片
         LinearLayout statsCard = createCard();
-        
-        TextView statsTitle = new TextView(this);
-        statsTitle.setText("任务统计");
-        statsTitle.setTextSize(16);
-        statsTitle.setTextColor(Color.parseColor("#FFD700"));
-        statsTitle.setPadding(0, 0, 0, 12);
-        statsCard.addView(statsTitle);
-        
-        LinearLayout statsLayout = new LinearLayout(this);
-        statsLayout.setOrientation(LinearLayout.HORIZONTAL);
-        statsLayout.setGravity(Gravity.CENTER);
-        
-        // 签到统计
-        LinearLayout signStat = createStatItem("签到", "0");
-        statsLayout.addView(signStat);
-        
-        // 任务统计
-        LinearLayout taskStat = createStatItem("任务", "0");
-        statsLayout.addView(taskStat);
-        
-        // 奖励统计
-        LinearLayout rewardStat = createStatItem("奖励", "0");
-        statsLayout.addView(rewardStat);
-        
-        statsCard.addView(statsLayout);
+        tvStats = new TextView(this);
+        tvStats.setText("签到: 0 | 任务: 0 | 奖励: 0");
+        tvStats.setTextSize(14);
+        tvStats.setTextColor(Color.parseColor("#FFD700"));
+        statsCard.addView(tvStats);
         mainLayout.addView(statsCard);
         
         // 日志卡片
         LinearLayout logCard = createCard();
-        
         TextView logTitle = new TextView(this);
         logTitle.setText("运行日志");
         logTitle.setTextSize(16);
@@ -123,7 +86,7 @@ public class MainActivity extends Activity {
         
         scrollView = new ScrollView(this);
         scrollView.setLayoutParams(new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, 600));
+            ViewGroup.LayoutParams.MATCH_PARENT, 800));
         
         tvLog = new TextView(this);
         tvLog.setText("等待日志...");
@@ -134,13 +97,12 @@ public class MainActivity extends Activity {
         
         scrollView.addView(tvLog);
         logCard.addView(scrollView);
-        
         mainLayout.addView(logCard);
         
         setContentView(mainLayout);
         
-        // 模拟日志更新
-        startLogSimulation();
+        addLog("模块界面已启动");
+        addLog("请在番茄小说中操作以触发日志");
     }
     
     private LinearLayout createCard() {
@@ -155,67 +117,12 @@ public class MainActivity extends Activity {
         return card;
     }
     
-    private LinearLayout createStatItem(String label, String value) {
-        LinearLayout item = new LinearLayout(this);
-        item.setOrientation(LinearLayout.VERTICAL);
-        item.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
-        item.setLayoutParams(params);
-        
-        TextView valueText = new TextView(this);
-        valueText.setText(value);
-        valueText.setTextSize(24);
-        valueText.setTextColor(Color.parseColor("#4CAF50"));
-        valueText.setGravity(Gravity.CENTER);
-        item.addView(valueText);
-        
-        TextView labelText = new TextView(this);
-        labelText.setText(label);
-        labelText.setTextSize(12);
-        labelText.setTextColor(Color.parseColor("#AAAAAA"));
-        labelText.setGravity(Gravity.CENTER);
-        item.addView(labelText);
-        
-        return item;
-    }
-    
-    private void startLogSimulation() {
-        // 模拟日志更新
-        handler.postDelayed(() -> {
-            addLog("模块初始化完成");
-            addLog("开始监控签到接口...");
-            updateStatus("运行中 | 监控中");
-        }, 1000);
-        
-        handler.postDelayed(() -> {
-            addLog("检测到签到请求");
-            addLog("签到成功! +100金币");
-            signCount++;
-            updateStats();
-        }, 3000);
-        
-        handler.postDelayed(() -> {
-            addLog("检测到可完成任务");
-            addLog("自动完成任务: 阅读1分钟");
-            taskCount++;
-            updateStats();
-        }, 5000);
-        
-        handler.postDelayed(() -> {
-            addLog("检测到可领取奖励");
-            addLog("自动领取奖励: +50金币");
-            rewardCount++;
-            updateStats();
-        }, 7000);
-    }
-    
-    private void addLog(String message) {
+    public void addLog(String message) {
         String timestamp = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
         String logEntry = "[" + timestamp + "] " + message;
         
         logList.add(logEntry);
-        if (logList.size() > MAX_LOG_LINES) {
+        if (logList.size() > 50) {
             logList.remove(0);
         }
         
@@ -229,25 +136,12 @@ public class MainActivity extends Activity {
         });
     }
     
-    private void updateStatus(String status) {
-        handler.post(() -> tvStatus.setText(status));
+    public void updateStatus(String status) {
+        handler.post(() -> tvStatus.setText("状态: " + status));
     }
     
-    private void updateStats() {
-        handler.post(() -> {
-            // 更新统计数字
-            LinearLayout statsLayout = (LinearLayout) ((LinearLayout) tvStatus.getParent().getParent()).getChildAt(1);
-            if (statsLayout instanceof LinearLayout) {
-                LinearLayout statsCard = (LinearLayout) statsLayout;
-                if (statsCard.getChildCount() > 1) {
-                    LinearLayout statsRow = (LinearLayout) statsCard.getChildAt(1);
-                    if (statsRow.getChildCount() >= 3) {
-                        ((TextView) ((LinearLayout) statsRow.getChildAt(0)).getChildAt(0)).setText(String.valueOf(signCount));
-                        ((TextView) ((LinearLayout) statsRow.getChildAt(1)).getChildAt(0)).setText(String.valueOf(taskCount));
-                        ((TextView) ((LinearLayout) statsRow.getChildAt(2)).getChildAt(0)).setText(String.valueOf(rewardCount));
-                    }
-                }
-            }
-        });
+    public void updateStats(int sign, int task, int reward) {
+        handler.post(() -> tvStats.setText(
+            String.format(Locale.getDefault(), "签到: %d | 任务: %d | 奖励: %d", sign, task, reward)));
     }
 }
