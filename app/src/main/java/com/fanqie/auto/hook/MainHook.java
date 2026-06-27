@@ -18,14 +18,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 番茄小说自动签到模块 v18.0.0
- * 从LuckyDog SDK获取token
+ * 番茄小说自动签到模块 v19.0.0
+ * 集成会员解锁 + 自动签到
  */
 public class MainHook implements IXposedHookLoadPackage {
 
     private static final String TAG = "[FanqieAuto] ";
     private static final String TARGET_PACKAGE = "com.dragon.read";
-    private static final String MODULE_VERSION = "v18.0.0";
+    private static final String MODULE_VERSION = "v19.0.0";
 
     // 正确的API服务器
     private static final String API_SERVER = "https://api5-normal-sinfonlinea.fqnovel.com";
@@ -58,7 +58,7 @@ public class MainHook implements IXposedHookLoadPackage {
 
         XposedBridge.log(TAG + "==============================");
         XposedBridge.log(TAG + "番茄小说自动签到模块 " + MODULE_VERSION);
-        XposedBridge.log(TAG + "LuckyDog SDK Token模式");
+        XposedBridge.log(TAG + "会员解锁 + 自动签到");
         XposedBridge.log(TAG + "==============================");
 
         appClassLoader = lpparam.classLoader;
@@ -66,6 +66,9 @@ public class MainHook implements IXposedHookLoadPackage {
         try {
             // Hook Application获取上下文
             hookApplication(lpparam.classLoader);
+            
+            // Hook会员解锁
+            hookVipUnlock(lpparam.classLoader);
             
             // Hook LuckyDog SDK获取token
             hookLuckyDogSdk(lpparam.classLoader);
@@ -106,22 +109,81 @@ public class MainHook implements IXposedHookLoadPackage {
     }
 
     /**
+     * Hook会员解锁
+     */
+    private void hookVipUnlock(ClassLoader classLoader) {
+        try {
+            // Hook NsVipImpl.willShowLynxBanner 返回 false
+            XposedHelpers.findAndHookMethod(
+                "com.dragon.read.component.biz.impl.NsVipImpl",
+                classLoader,
+                "willShowLynxBanner",
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(false);
+                        XposedBridge.log(TAG + "Hook willShowLynxBanner -> false");
+                    }
+                }
+            );
+            XposedBridge.log(TAG + "NsVipImpl Hook成功");
+        } catch (Throwable e) {
+            XposedBridge.log(TAG + "NsVipImpl Hook失败: " + e.getMessage());
+        }
+
+        try {
+            // Hook VipInfoModel 构造函数，设置VIP状态
+            XposedHelpers.findAndHookConstructor(
+                "com.dragon.read.user.model.VipInfoModel",
+                classLoader,
+                String.class,  // userId
+                String.class,  // vipType
+                String.class,  // expireTime
+                boolean.class, // isVip
+                boolean.class, // isAutoRenew
+                int.class,     // vipLevel
+                boolean.class, // isAnnualVip
+                "com.dragon.read.rpc.model.VipCommonSubType", // subType
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        try {
+                            // 设置VIP状态
+                            XposedHelpers.setBooleanField(param.thisObject, "isVip", true);
+                            XposedHelpers.setBooleanField(param.thisObject, "isAutoRenew", true);
+                            XposedHelpers.setIntField(param.thisObject, "vipLevel", 1);
+                            XposedHelpers.setBooleanField(param.thisObject, "isAnnualVip", true);
+                            
+                            // 设置过期时间（远未来）
+                            XposedHelpers.setObjectField(param.thisObject, "expireTime", "3093518135349");
+                            
+                            XposedBridge.log(TAG + "Hook VipInfoModel -> VIP解锁");
+                        } catch (Throwable e) {
+                            XposedBridge.log(TAG + "设置VIP状态失败: " + e.getMessage());
+                        }
+                    }
+                }
+            );
+            XposedBridge.log(TAG + "VipInfoModel Hook成功");
+        } catch (Throwable e) {
+            XposedBridge.log(TAG + "VipInfoModel Hook失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * Hook LuckyDog SDK获取token
      */
     private void hookLuckyDogSdk(ClassLoader classLoader) {
         try {
-            // Hook TokenUnionInterceptor
             Class<?> tokenInterceptorClass = classLoader.loadClass(
                 "com.bytedance.ug.sdk.luckydog.tokenunion.interceptor.TokenUnionInterceptor");
             
-            // 找到获取token的方法
             for (Method method : tokenInterceptorClass.getDeclaredMethods()) {
                 if (method.getName().contains("getToken") || method.getName().contains("intercept")) {
                     XposedBridge.hookMethod(method, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             try {
-                                // 尝试获取返回的token
                                 Object result = param.getResult();
                                 if (result != null) {
                                     String token = result.toString();
@@ -153,12 +215,10 @@ public class MainHook implements IXposedHookLoadPackage {
         if (appContext == null) return;
         
         try {
-            // 获取SharedPreferences
             Object prefs = XposedHelpers.callMethod(appContext, 
                 "getSharedPreferences", "luckydog_sdk_config.prefs", 0);
             
             if (prefs != null) {
-                // 读取token
                 String token = (String) XposedHelpers.callMethod(prefs, 
                     "getString", "luckydog_token_key", "");
                 
@@ -181,13 +241,11 @@ public class MainHook implements IXposedHookLoadPackage {
     private void startScheduler() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         
-        // 每60秒输出状态并尝试签到
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 XposedBridge.log(TAG + "状态: 签到=" + signCount + " 成功=" + successCount);
                 XposedBridge.log(TAG + "Token: " + (capturedToken != null ? "已捕获" : "未捕获"));
                 
-                // 如果有token，尝试签到
                 if (capturedToken != null && !isProcessing.get()) {
                     isProcessing.set(true);
                     tryAutoSign();
@@ -212,7 +270,6 @@ public class MainHook implements IXposedHookLoadPackage {
         XposedBridge.log(TAG + "尝试自动签到...");
         signCount++;
         
-        // 创建新线程执行HTTP请求
         new Thread(() -> {
             for (String apiPath : SIGN_APIs) {
                 try {
@@ -222,21 +279,17 @@ public class MainHook implements IXposedHookLoadPackage {
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/json");
                     conn.setRequestProperty("User-Agent", "okhttp/3.12.1");
-                    
-                    // 添加LuckyDog token
                     conn.setRequestProperty("token", capturedToken);
                     
                     conn.setDoOutput(true);
                     conn.setConnectTimeout(10000);
                     conn.setReadTimeout(10000);
                     
-                    // 发送请求
                     OutputStream os = conn.getOutputStream();
                     os.write("{}".getBytes());
                     os.flush();
                     os.close();
                     
-                    // 获取响应
                     int responseCode = conn.getResponseCode();
                     BufferedReader in = new BufferedReader(new InputStreamReader(
                         responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream()));
